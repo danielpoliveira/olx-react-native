@@ -2,9 +2,9 @@ import React from 'react';
 import { View, Text, StatusBar, StyleSheet} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator, DrawerItemList } from '@react-navigation/drawer';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-import  Svg,  {SvgXml, Path}  from 'react-native-svg';
+
+import  Svg, {Path}  from 'react-native-svg';
 
 import { HomeStack, InsertADStack, ChatStack, FavoritesStack, NotificationStack, ProfileStack } from './pages/index';
 
@@ -43,8 +43,8 @@ setIcon = (name = '', color, size, focused) => {
   return <>
     <Svg viewBox="0 0 40 40"  width="30" height="30" >
       {d.map((srcPath, index) => <Path key={index} d={srcPath}
-       {...name !== "Anúncios"? { transform:"translate(1.75,1.5)", scaleX:1.5, scaleY:1.5,  fill: focused? "#orange": "#444"} :  
-       focused? {fill: olxLogoColors[index]} : undefined }  />)}
+       {...name !== "Anúncios"? { transform:"translate(1.75,1.5)", scaleX:1.5, scaleY:1.5,  fill: focused? "orange": "#444"} :  
+        {fill: focused? olxLogoColors[index]: "#444" } }  />)}
     </Svg>
   </>
 }
