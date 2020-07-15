@@ -6,10 +6,14 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import Home     from './Home';
 import InsertAD from './InsertAD';
-
+import Product from './Product';
 import Categories from './Categories';
 import { Subcategory } from './Categories/CategoriesOptions';
 
+import Chat from './Chat';
+import Conversation from './Chat/Conversation';
+
+import Profile from './Profile';
 
 const Stack = createStackNavigator();
 
@@ -17,37 +21,40 @@ const customHeaderStyle = {
   backgroundColor: "#6D0AD6",
 };
 
-export const HomeStack = (props) => {
+export const HomeStack = props => {
 
   const { navigation } = props;
 
   return (
-  <Stack.Navigator  screenOptions={{
+    <Stack.Navigator  
+      screenOptions={{
+        headerStyle: customHeaderStyle,
+        headerTintColor: "#FFF" ,
+        headerTitle: false,
+      }}
+    >
+      <Stack.Screen 
+        name="Anúncios" component={Home} 
+        options={{
+          headerLeft: () => 
+            (<TouchableOpacity style={{ paddingLeft: 12.5 }} onPress={() => navigation.openDrawer()}>
+              <MaterialIcons name="menu" size={25} color="#FFF" />
+            </TouchableOpacity>),
+          headerRight: () =>
+            (<View style={{ flexDirection: "row", paddingRight: 12.5}} >
+              <TouchableOpacity style={{marginRight: 10}} >
+                <MaterialIcons name="search" size={25} color="#FFF" />
+              </TouchableOpacity>
 
-    headerStyle: customHeaderStyle,
-    headerTintColor: "#FFF" ,
-    headerTitle: false,
-    
-    headerLeft: () => 
-      (<TouchableOpacity style={{ paddingLeft: 12.5 }} onPress={() => navigation.openDrawer()}>
-        <MaterialIcons name="menu" size={25} color="#FFF" />
-      </TouchableOpacity>),
-    headerRight: () =>
-      (<View style={{ flexDirection: "row", paddingRight: 12.5}} >
-        <TouchableOpacity style={{marginRight: 10}} >
-          <MaterialIcons name="search" size={25} color="#FFF" />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={{marginLeft: 10}}>
-          <MaterialIcons name="favorite-border" size={25} color="#FFF" />
-        </TouchableOpacity>
-      </View>)
-     
-    
-  }}>
-    <Stack.Screen name="Anúncios" component={Home} />
-  </Stack.Navigator>
-);
+              <TouchableOpacity style={{marginLeft: 10}}>
+                <MaterialIcons name="favorite-border" size={25} color="#FFF" />
+              </TouchableOpacity>
+            </View>)
+        }}
+      />
+      <Stack.Screen name="Produto" component={Product} />
+    </Stack.Navigator>
+  ); 
 
 }
 
@@ -86,8 +93,23 @@ export const NotificationStack = ({ navigation }) => (
 );
 
 export const ChatStack = ({ navigation }) => (
-  <Stack.Navigator>
-    <Stack.Screen name="Chat" component={Chat} />
+  <Stack.Navigator screenOptions={{ 
+    headerStyle: customHeaderStyle,
+    headerTintColor: "#FFF" ,
+    
+  }}>
+    <Stack.Screen 
+      name="Chat" component={Chat} 
+      options={{        
+        headerLeft: () => 
+          (<TouchableOpacity style={{ paddingLeft: 12.5 }} onPress={() => navigation.openDrawer()}>
+            <MaterialIcons name="menu" size={25} color="#FFF" />
+          </TouchableOpacity>),
+      }}
+    />
+
+    <Stack.Screen name="Conversa" component={Conversation} />
+
   </Stack.Navigator>
 );
 
@@ -103,8 +125,19 @@ export const FavoritesStack = ({ navigation }) => (
 );
 
 export const ProfileStack = ({ navigation }) => (
-  <Stack.Navigator>
-    <Stack.Screen name="Minha Conta" component={Profile} />
+  <Stack.Navigator screenOptions={{ 
+    headerStyle: customHeaderStyle,
+    headerTintColor: "#FFF" ,
+    
+  }}>
+    <Stack.Screen name="Minha Conta" component={Profile} 
+      options={{        
+        headerLeft: () => 
+          (<TouchableOpacity style={{ paddingLeft: 12.5 }} onPress={() => navigation.openDrawer()}>
+            <MaterialIcons name="menu" size={25} color="#FFF" />
+          </TouchableOpacity>),
+      }}
+    />
   </Stack.Navigator>
 );
 
@@ -115,23 +148,13 @@ const Notification = () => (
   </View>
 );
 
-const Chat = () => (
-  <View>
-    <Text>Chat</Text>
-  </View>
-);
-
 const Favorites = () => (
   <View>
     <Text>Favorites</Text>
   </View>
 );
 
-const Profile = () => (
-  <View>
-    <Text>Profile</Text>
-  </View>
-);
+
 
 const headerConfig = {
 

@@ -97,9 +97,9 @@ const Routes = () => {
           
         }} />
 
-        <Drawer.Screen name="Notificações" component={NotificationStack} />
+        {/* <Drawer.Screen name="Notificações" component={NotificationStack} /> */}
         <Drawer.Screen name="Chat" component={ChatStack} />
-        <Drawer.Screen name="Favoritos" component={FavoritesStack} />
+        {/* <Drawer.Screen name="Favoritos" component={FavoritesStack} /> */}
         <Drawer.Screen name="Minha Conta" component={ProfileStack} />
       </Drawer.Navigator>
     </NavigationContainer>
