@@ -4,8 +4,12 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { createStackNavigator } from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
+import Home     from './Home';
+import InsertAD from './InsertAD';
 
-import Home from './Home';
+import Categories from './Categories';
+import { Subcategory } from './Categories/CategoriesOptions';
+
 
 const Stack = createStackNavigator();
 
@@ -16,8 +20,6 @@ const customHeaderStyle = {
 export const HomeStack = (props) => {
 
   const { navigation } = props;
-
-  console.log(props);
 
   return (
   <Stack.Navigator  screenOptions={{
@@ -53,9 +55,22 @@ export const InsertADStack = ({ navigation }) => {
   
   return (
   <Stack.Navigator screenOptions={{ 
+    headerStyle: customHeaderStyle,
+    headerTintColor: "#FFF" ,
     
   }} >
-    <Stack.Screen name="Inserir Anúncio" component={InsertAD} />
+    <Stack.Screen 
+    
+      options={{
+        headerLeft: () => 
+      (<TouchableOpacity style={{ paddingLeft: 12.5 }} onPress={() => navigation.openDrawer()}>
+        <MaterialIcons name="menu" size={25} color="#FFF" />
+      </TouchableOpacity>),
+      }}
+
+      name="Inserir Anúncio" component={InsertAD} />
+    <Stack.Screen name="Categorias" component={Categories} />
+    <Stack.Screen name="Subcategoria" component={Subcategory} />
   </Stack.Navigator>
 );
 }
@@ -93,11 +108,6 @@ export const ProfileStack = ({ navigation }) => (
   </Stack.Navigator>
 );
 
-const InsertAD = () => (
-  <View>
-    <Text>Insert AD</Text>
-  </View>
-);
 
 const Notification = () => (
   <View>

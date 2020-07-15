@@ -3,8 +3,7 @@ import { View, Text, StatusBar, StyleSheet} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator, DrawerItemList } from '@react-navigation/drawer';
 
-
-import  Svg, {Path}  from 'react-native-svg';
+import Svg, {Path}  from 'react-native-svg';
 
 import { HomeStack, InsertADStack, ChatStack, FavoritesStack, NotificationStack, ProfileStack } from './pages/index';
 
@@ -15,7 +14,7 @@ setIcon = (name = '', color, size, focused) => {
 
   const olxLogoColors = ["#6E0AD6", "#8CE563", "#F28000"];
 
-  switch(name){
+  switch(name) {
     case "Anúncios": 
       d[0] = "M7.579 26.294c-2.282 0-3.855-1.89-3.855-4.683 0-2.82 1.573-4.709 3.855-4.709 2.28 0 3.855 1.889 3.855 4.682 0 2.82-1.574 4.71-3.855 4.71m0 3.538c4.222 0 7.578-3.512 7.578-8.248 0-4.682-3.173-8.22-7.578-8.22C3.357 13.363 0 16.874 0 21.61c0 4.763 3.173 8.221 7.579 8.221";
       d[1] = "M18.278 23.553h7.237c.499 0 .787-.292.787-.798V20.44c0-.505-.288-.798-.787-.798h-4.851V9.798c0-.505-.288-.798-.787-.798h-2.386c-.498 0-.787.293-.787.798v12.159c0 1.038.551 1.596 1.574 1.596";
