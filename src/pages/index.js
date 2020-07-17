@@ -29,13 +29,13 @@ export const HomeStack = props => {
     <Stack.Navigator  
       screenOptions={{
         headerStyle: customHeaderStyle,
-        headerTintColor: "#FFF" ,
-        headerTitle: false,
+        headerTintColor: "#FFF" ,  
       }}
     >
       <Stack.Screen 
         name="Anúncios" component={Home} 
         options={{
+          headerTitle: false,
           headerLeft: () => 
             (<TouchableOpacity style={{ paddingLeft: 12.5 }} onPress={() => navigation.openDrawer()}>
               <MaterialIcons name="menu" size={25} color="#FFF" />
@@ -52,7 +52,8 @@ export const HomeStack = props => {
             </View>)
         }}
       />
-      <Stack.Screen name="Produto" component={Product} />
+      
+      <Stack.Screen name="Produto" component={Product}  />
     </Stack.Navigator>
   ); 
 
@@ -108,7 +109,13 @@ export const ChatStack = ({ navigation }) => (
       }}
     />
 
-    <Stack.Screen name="Conversa" component={Conversation} />
+    <Stack.Screen name="Conversa" component={Conversation} 
+      
+      options={({ route }) => ({ title: route.params.user.username })}
+
+      
+
+    />
 
   </Stack.Navigator>
 );

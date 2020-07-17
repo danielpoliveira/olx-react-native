@@ -1,17 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, SafeAreaView, ScrollView, Dimensions, StyleSheet, Image } from 'react-native';
-
+import _ from 'lodash';
 import Svg, {Path} from 'react-native-svg';
+
+import api from '../../services/api';
 
 const screen = Dimensions.get("screen").width;
 
 export default ({ route }) => {
   if(!route)
     return null;
-
+  
   const { product } = route.params;
+  const { userId  } = product;
 
-  console.log(product);
+  const [ user, setUser ] = useState({}); 
+  const [ location, setLocation ] = useState({});
+
+  useEffect(() => {
+    async function loadUser() {
+      const res = await api.get(`/user/${userId}`);
+
+      setUser(res.data.user);
+    }
+
+    async function loadLocation() {
+      const res = await api.get(`https://viacep.com.br/ws/${product.cep}/json/`);
+
+      setLocation(res.data);
+    }
+
+    loadLocation();
+    loadUser();
+  }, []);
+
   return (
     <SafeAreaView>
       <ScrollView>
@@ -36,9 +58,10 @@ export default ({ route }) => {
             marginHorizontal: 20,
             borderBottomWidth: StyleSheet.hairlineWidth,
             borderColor: "#777",
-            paddingVertical: 20}} >
-            <Text style={{fontSize: 19, color: "#333"}}>Moto z3 play apenas troca</Text>
-            <Text style={{marginVertical: 10, color: "#777"}}>Publicado em 15/07 às 12:10</Text>
+            paddingVertical: 20}} 
+          >
+            <Text style={{fontSize: 19, color: "#333"}}>{product.title}</Text>
+            <Text style={{marginVertical: 10, color: "#777"}}>Publicado em {product.createdAt}</Text>
           </View>
 
           <View
@@ -51,7 +74,7 @@ export default ({ route }) => {
           >
             <Text style={{fontSize: 19, color: "#333"}}>Descrição</Text>
             <Text style={{marginVertical: 10, color: "#444"}} >
-              Troco meu moto z3 play em outro celular obs eu não aceito j7 j5 G6 play G7 play e iPhone interessado celular em perfeito estado de conservação
+              {product.description}
             </Text>
           </View>
 
@@ -64,32 +87,62 @@ export default ({ route }) => {
             }} 
           >
             <Text style={{fontSize: 19, color: "#333"}}>Detalhes</Text>
-            <View style={{
-              paddingVertical:10,
-               flexDirection: "column"}} >
+            <View 
+              style={{
+                paddingVertical:10,
+                flexDirection: "column"
+              }} 
+            >     
               <View 
                 style={{
                   marginVertical:5,
-                  flexDirection: "row" }}
+                  flexDirection: "row" 
+                }}
               >
                 <Text 
                   style={{
                     color: "#444",
                     width: 180
                   }}>Novo/Usado</Text>
-                <Text>Novo</Text>
+                <Text>{product.newProduct? 'Novo' : 'Usado'}</Text>
               </View>
               
-              <View style={{
-                marginVertical:5,
-                flexDirection: "row"}} >
-                <Text style={{
-                  color: "#444",
-                  width: 180}}>Tipo</Text>
-                <Text>Motorola e Lenovo</Text>
-              </View>
+              { product.type &&
+                <View style={{
+                  marginVertical:5,
+                  flexDirection: "row"}} >
+                  <Text style={{
+                    color: "#444",
+                    width: 180}}>Tipo</Text>
+                  <Text>{product.type}</Text>
+                </View>
+              }
+
+              {
+                product.details && _.isEmpty(!product.details) && 
+                Object.entries(product.details).map((item, index) => 
+                  <View key={index} style={{ marginVertical:5, flexDirection: "row" }} >
+                    <Text 
+                      style={{
+                        color: "#444",
+                        width: 180
+                      }}>{item[0]}</Text>
+                    { 
+                      typeof item[1] === 'boolean'? 
+                      <Text>{item[1] ? 'Sim' : 'Não'}</Text>:
+
+                      typeof item[1] === 'object'? 
+                        <View style={{flexDirection: "column"}} >
+                          { item[1].map((value, index) => <Text key={index} >{value}</Text>) }
+                        </View>
+                      :
+                        <Text style={{ flex: 1, flexWrap: 'wrap'}}>{item[1]}</Text>
+                    }
+                  </View>    
+                )
+              }
+
             </View>
-            
           </View>
 
           <View
@@ -114,7 +167,7 @@ export default ({ route }) => {
                     color: "#444",
                     width: 180
                   }}>CEP</Text>
-                <Text>65068593</Text>
+                <Text>{location.cep}</Text>
               </View>
               <View 
                 style={{
@@ -126,7 +179,7 @@ export default ({ route }) => {
                     color: "#444",
                     width: 180
                   }}>Município</Text>
-                <Text>São Luís</Text>
+                <Text>{location.localidade}</Text>
               </View>
               
               <View 
@@ -139,7 +192,7 @@ export default ({ route }) => {
                     color: "#444",
                     width: 180
                   }}>Bairro</Text>
-                <Text>Vila Luizão</Text>
+                <Text>{location.bairro}</Text>
               </View>
             </View>
           </View>
@@ -162,7 +215,8 @@ export default ({ route }) => {
                 marginBottom: 60,
               }} 
             >
-              <Text>Lucianotiopepis</Text>
+
+            <Text>{user.name}</Text>
             </View>
           </View>     
         </View>
@@ -195,9 +249,6 @@ export default ({ route }) => {
               }}
         >Chat</Text>
       </View>
-
-
-
     </SafeAreaView>
   );
 }

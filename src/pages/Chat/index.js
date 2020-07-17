@@ -14,23 +14,21 @@ const DATA = [
 ];
 
 const RenderItem = props => {
-  const {item, navigate} = props
-  
-  console.log(props);
+  const { navigate } = props;
+  const user = props.item;
 
   return (
     <View 
-
-      onTouchEnd={() => navigate('Conversa')}
+      onTouchEnd={() => navigate('Conversa', { user })}
       style={{
         flexDirection: "row", alignItems: "center"}} 
     >
-      
-      <View blue
+      <View 
         style={{
           borderRadius: 5,
           margin: 15,
-          width: 60, height: 60, backgroundColor: "gray"}}
+          width: 60, height: 60, backgroundColor: "gray"
+        }}
       />
 
       <View style={{
@@ -46,12 +44,12 @@ const RenderItem = props => {
       }}
       >
         <View>
-          <Text style={{fontWeight: "bold", fontSize: 15}} >{item.title}</Text>
-          <Text>{item.username}</Text>
+          <Text style={{fontWeight: "bold", fontSize: 15}} >{user.title}</Text>
+          <Text>{user.username}</Text>
         </View>
 
         <View>
-          <Text style={{color: "#888", fontSize: 12}}>{item.data}</Text>
+          <Text style={{color: "#888", fontSize: 12}}>{user.data}</Text>
         </View>
       </View>
     </View>
@@ -65,7 +63,7 @@ export default props => {
   console.log('chat props ================> '+ props)
   return (
     <SafeAreaView>
-      <FlatList data={DATA} renderItem={item => <RenderItem {...navigation}  {...item} />} />
+      <FlatList data={DATA} renderItem={user => <RenderItem {...navigation}  {...user} />} />
     </SafeAreaView>
   );
 }
