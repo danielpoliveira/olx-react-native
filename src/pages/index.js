@@ -9,11 +9,11 @@ import InsertAD from './InsertAD';
 import Product from './Product';
 import Categories from './Categories';
 import { Subcategory } from './Categories/CategoriesOptions';
-
 import Chat from './Chat';
 import Conversation from './Chat/Conversation';
-
 import Profile from './Profile';
+
+import Login from './Login';
 
 const Stack = createStackNavigator();
 
@@ -52,6 +52,8 @@ export const HomeStack = props => {
             </View>)
         }}
       />
+
+      <Stack.Screen name="Login" component={Login} />
       
       <Stack.Screen name="Produto" component={Product}  />
     </Stack.Navigator>
@@ -60,8 +62,8 @@ export const HomeStack = props => {
 }
 
 export const InsertADStack = ({ navigation }) => {
-  
   return (
+
   <Stack.Navigator screenOptions={{ 
     headerStyle: customHeaderStyle,
     headerTintColor: "#FFF" ,
@@ -71,7 +73,7 @@ export const InsertADStack = ({ navigation }) => {
     
       options={{
         headerLeft: () => 
-      (<TouchableOpacity style={{ paddingLeft: 12.5 }} onPress={() => navigation.openDrawer()}>
+      (<TouchableOpacity style={{ paddingLeft: 12.5 }} onPress={() => navigation.openDrawer()  }>
         <MaterialIcons name="menu" size={25} color="#FFF" />
       </TouchableOpacity>),
       }}
@@ -160,9 +162,3 @@ const Favorites = () => (
     <Text>Favorites</Text>
   </View>
 );
-
-
-
-const headerConfig = {
-
-}

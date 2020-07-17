@@ -1,11 +1,17 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { View, Text, StatusBar, StyleSheet} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator, DrawerItemList } from '@react-navigation/drawer';
 
-import Svg, {Path}  from 'react-native-svg';
+import Svg, { Path }  from 'react-native-svg';
 
 import { HomeStack, InsertADStack, ChatStack, FavoritesStack, NotificationStack, ProfileStack } from './pages/index';
+
+import { isLogged } from './services/auth';
+
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { SignIn } from './pages/actions';
 
 setIcon = (name = '', color, size, focused) => {
   console.log("valor de name -------> ", name);
@@ -55,11 +61,25 @@ const screenOptions = ({ route }) => ({
 
     return Icon;
   }
-})
+});
 
 
 const Drawer = createDrawerNavigator();
-const Routes = () => {
+const Routes = props => {
+
+  useEffect(() => {
+    async function checkLogin() {
+      const t = await isLogged();
+
+      if(t && !props.logged) {
+        props.SignIn();
+      }
+      console.log('valor de t ------------>', t);
+    }
+
+    checkLogin();
+  }, []) ;
+
   return (
     <NavigationContainer>
       <Drawer.Navigator 
@@ -106,14 +126,23 @@ const Routes = () => {
   )
 }
 
-export default () => (
+const App = (props) =>
   <>
-    <StatusBar  
-    
+    <StatusBar      
     translucent
     backgroundColor="rgba(0, 0, 0, 0.20)"
-    animated/>
+    animated
+    />
 
-    <Routes />
+    <Routes {...props}/>
   </>
-);
+
+const mapStateToProps = state => ({
+  logged: state.app.logged
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+  SignIn,
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

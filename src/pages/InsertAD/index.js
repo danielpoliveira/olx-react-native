@@ -14,9 +14,18 @@ import CheckBox from '@react-native-community/checkbox';
 import Icons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-export default props => {
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { SignIn } from '../actions';
 
-  const { navigation, route } = props;
+const InsertAD = props => {
+
+  const { navigation, route, logged } = props;
+
+  if(!logged){
+    navigation.navigate('Login');
+    return null;
+  }
   
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
 
@@ -163,3 +172,13 @@ export default props => {
     </SafeAreaView>
   );
 }
+
+const mapStateToProps = state => ({
+  logged: state.app.logged
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+  SignIn,
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(InsertAD);

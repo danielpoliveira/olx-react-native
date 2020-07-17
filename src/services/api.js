@@ -1,15 +1,18 @@
 import axios from 'axios';
 
+import { isLogged } from './auth';
+
 const api = axios.create({
   baseURL: 'http://192.168.0.42:3333/'
 });
 
-/*api.interceptors.request.use(
+api.interceptors.request.use(
   async config => {
     return await isLogged()
     .then(data => {
-      if(data)
+      if(data){
         config.headers.Authorization = `Bearer ${data}`;
+      }
         
       return Promise.resolve(config);  
     })
@@ -22,6 +25,6 @@ const api = axios.create({
     console.log(err);
     return Promise.reject(err);
   }
-);*/
+);
 
 export default api;
