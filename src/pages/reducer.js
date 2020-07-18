@@ -8,6 +8,11 @@ export default (state=INITIAL_STATE, action) => {
       ...state,
       logged: true,
     };
+    
+    case 'LOGGOUT': return {
+      ...state,
+      logged: false,
+    };
 
     default: return state;
   }

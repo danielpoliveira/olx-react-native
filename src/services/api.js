@@ -3,7 +3,8 @@ import axios from 'axios';
 import { isLogged } from './auth';
 
 const api = axios.create({
-  baseURL: 'http://192.168.0.42:3333/'
+  //baseURL: 'http://192.168.0.42:3333/'
+  baseURL: 'http://192.168.43.5:3333/'
 });
 
 api.interceptors.request.use(

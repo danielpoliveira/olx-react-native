@@ -7,14 +7,16 @@ import Svg, { Path }  from 'react-native-svg';
 
 import { HomeStack, InsertADStack, ChatStack, FavoritesStack, NotificationStack, ProfileStack } from './pages/index';
 
-import { isLogged } from './services/auth';
+import { isLogged, clearToken } from './services/auth';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { SignIn } from './pages/actions';
+import { SignIn, Loggout } from './pages/actions';
+
+import jwtDecode from 'jwt-decode';
 
 setIcon = (name = '', color, size, focused) => {
-  console.log("valor de name -------> ", name);
+  // console.log("valor de name -------> ", name);
   
   const d = [];
 
@@ -63,18 +65,27 @@ const screenOptions = ({ route }) => ({
   }
 });
 
-
 const Drawer = createDrawerNavigator();
 const Routes = props => {
 
   useEffect(() => {
     async function checkLogin() {
-      const t = await isLogged();
+      const token = await isLogged();
 
-      if(t && !props.logged) {
-        props.SignIn();
-      }
-      console.log('valor de t ------------>', t);
+      if(token) {
+        const decoded = jwtDecode(token);
+
+        if(decoded && decoded.exp < Date.now() / 3600 ) {
+          await clearToken();
+  
+          props.Loggout();
+        } else if(!props.logged) {
+          
+          props.SignIn();
+        }
+      } 
+
+      console.log('valor de t ------------>', token);
     }
 
     checkLogin();
@@ -86,7 +97,7 @@ const Routes = props => {
       screenOptions={screenOptions}
       drawerContent={
         props => {
-          console.log("valor de props: ------> ", props);
+          // console.log("valor de props: ------> ", props);
          return <>
           <View style={{ paddingTop: StatusBar.currentHeight, backgroundColor: "#6D0AD6" }}>
             <View  style={{paddingVertical: 25,justifyContent: "center", flexDirection: "row", alignItems: "center"}} >  
@@ -142,7 +153,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  SignIn,
+  SignIn, Loggout
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

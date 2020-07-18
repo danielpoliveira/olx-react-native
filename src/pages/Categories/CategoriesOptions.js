@@ -7,19 +7,24 @@ export const Subcategory = props => {
   if (!route.params)
     return null;
 
-  const { subcategory } = route.params;
+  const { subcategory, category } = route.params;
 
   const RenderItem = props => {
     const { item, end } = props;
 
-    console.log(props)
+    console.log('item ', props)
     return (
       <View  
         
-      onTouchEnd={() => navigation.navigate('Inserir Anúncio', {selected: item})}
+      onTouchEnd={() => navigation.navigate('Inserir Anúncio', {
+        selected: {
+          category: props.category,
+          subcategory: item,
+        }
+      })}
 
         style={{ padding: 18, borderBottomWidth: !end? StyleSheet.hairlineWidth : 0}} >
-        <Text>{item}</Text>
+        <Text>{item.name}</Text>
       </View>
     );
   }
@@ -28,7 +33,7 @@ export const Subcategory = props => {
     <SafeAreaView>
       <FlatList data={subcategory}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={item => < RenderItem {...item} end={item.index === subcategory.length-1} />} />
+        renderItem={item => < RenderItem {...item} category={category} end={item.index === subcategory.length-1} />} />
     </SafeAreaView>
   );
 }
