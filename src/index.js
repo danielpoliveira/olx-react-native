@@ -58,9 +58,7 @@ setIcon = (name = '', color, size, focused) => {
 
 const screenOptions = ({ route }) => ({
   drawerIcon: ({ focused, color, size }) => {  
-    console.log(focused )
     const Icon = setIcon(route.name, color, size, focused);
-
     return Icon;
   }
 });
@@ -75,7 +73,10 @@ const Routes = props => {
       if(token) {
         const decoded = jwtDecode(token);
 
-        if(decoded && decoded.exp < Date.now() / 3600 ) {
+        console.log(decoded)
+
+        if(decoded && decoded.exp < Date.now() / 1000 ) {
+          
           await clearToken();
   
           props.Loggout();

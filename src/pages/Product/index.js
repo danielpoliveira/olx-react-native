@@ -3,6 +3,14 @@ import { View, Text, SafeAreaView, ScrollView, Dimensions, StyleSheet, Image } f
 import _ from 'lodash';
 import Svg, {Path} from 'react-native-svg';
 
+import moment from 'moment';
+
+moment.updateLocale('pt-br', {
+  months:   ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+  weekdays: ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado']
+});
+
+
 import api from '../../services/api';
 
 const screen = Dimensions.get("screen").width;
@@ -16,6 +24,8 @@ export default ({ route }) => {
 
   const [ user, setUser ] = useState({}); 
   const [ location, setLocation ] = useState({});
+
+  console.log(product)
 
   useEffect(() => {
     async function loadUser() {
@@ -46,11 +56,18 @@ export default ({ route }) => {
           }} 
         >
 
-        <Image 
-          style={{height: 270, width: 150}}
-          source={{uri: 'https://img.olx.com.br/images/58/581045309324385.jpg'}}
-        />
-
+        
+        {product.photos && product.photos.length? 
+          <Image 
+            style={{height: 270, width: 270}}
+            source={{uri: `http://192.168.0.42:3333/images/${product.photos[0]}`}}
+          />
+          :
+          <View 
+            style={{height: 270, width: 150, backgroundColor: "gray"}}
+            
+          />
+        }
         </View>
         
         <View>
@@ -61,7 +78,7 @@ export default ({ route }) => {
             paddingVertical: 20}} 
           >
             <Text style={{fontSize: 19, color: "#333"}}>{product.title}</Text>
-            <Text style={{marginVertical: 10, color: "#777"}}>Publicado em {product.createdAt}</Text>
+            <Text style={{marginVertical: 10, color: "#777"}}>Publicado em {moment(product.createdAt).format("D [de] MMMM [às] HH:mm")}</Text>
           </View>
 
           <View
@@ -121,27 +138,41 @@ export default ({ route }) => {
               {
                 product.details && _.isEmpty(!product.details) && 
                 Object.entries(product.details).map((item, index) => 
-                  <View key={index} style={{ marginVertical:5, flexDirection: "row" }} >
+                   <View key={index} style={{ marginVertical:5, flexDirection: item[0] !== 'options'? "row": "column" }} >
                     <Text 
                       style={{
                         color: "#444",
-                        width: 180
-                      }}>{item[0]}</Text>
+                        width: 180, textTransform: "capitalize"
+                      }}>{item[0].replace(/[^a-z0-9-]/g, ' ')}</Text>
                     { 
+
+                      item[0] !== 'options'?
+
                       typeof item[1] === 'boolean'? 
                       <Text>{item[1] ? 'Sim' : 'Não'}</Text>:
-
+                      
                       typeof item[1] === 'object'? 
                         <View style={{flexDirection: "column"}} >
                           { item[1].map((value, index) => <Text key={index} >{value}</Text>) }
                         </View>
                       :
                         <Text style={{ flex: 1, flexWrap: 'wrap'}}>{item[1]}</Text>
+                      : 
+                      item[1].map((aux, index) => {      
+
+                        return <View key={index}>
+                        {Object.entries(aux).map((aux2, index) => 
+                          <View key={index} style={{flexDirection: "row", marginVertical: 3, }} >
+                            <Text style={{width: 180, textTransform: "capitalize"}} >{aux2[0].replace(/[^a-z0-9-]/g, ' ')}</Text>
+                            <Text>{ aux2[1]  === 'false'? 'Não': aux2[1] === 'true'? 'Sim': aux2[1]}</Text>
+                          </View>
+                        )}
+                        </View>
+                      })
                     }
                   </View>    
                 )
               }
-
             </View>
           </View>
 

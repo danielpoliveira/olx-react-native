@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, SafeAreaView, Dimensions, StyleSheet } from 'react-native';
+import { View, Text, Image,Dimensions, StyleSheet } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
+import { useFocusEffect } from '@react-navigation/native';
+
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
+import moment from 'moment';
+
+moment.updateLocale('pt-br', {
+  months:   ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+  weekdays: ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado']
+});
+
 
 import api from '../../services/api';
 
@@ -10,6 +20,8 @@ const screen = Dimensions.get("screen").width;
 
 const Anuncio = props => {
   const { item, end, navigate } = props;
+
+  console.log(item.photos )
 
   return (
     <View 
@@ -21,12 +33,19 @@ const Anuncio = props => {
         marginHorizontal: 5,
         borderRadius: 5, overflow: "hidden"
       }]} >
-      <View style={{ width: 125, backgroundColor: '#' + (Math.random() * 0xFFFFFF << 0).toString(16) }} />
+
+      { item.photos && item.photos.length
+      ?
+        <Image style={{ width: 125, height: 125}} source={{uri: `http://192.168.0.42:3333/images/${item.photos[0]}/`}} />
+      :
+        <View style={{ width: 125, backgroundColor: '#' + (Math.random() * 0xFFFFFF << 0).toString(16) }} />
+      }
 
       <View style={{ flexDirection: "column", justifyContent: "space-between", padding: 15 }} >
         <Text style={{ fontSize: 14, fontWeight: "100", }}>{item.title}</Text>
         <Text style={{ fontSize: 17, fontWeight: "600" }}>{item.price? 'R$ ' + item.price: ''}</Text>
-        <Text style={{ fontSize: 12 }}>{item.createdAt}</Text>
+        {/* <Text style={{ fontSize: 12 }}>{item.createdAt}</Text> */}
+        <Text style={{ fontSize: 12 }}>{moment(item.createdAt).format("D [de] MMMM")}</Text>
       </View>
     </View>
   );
@@ -35,7 +54,7 @@ const Anuncio = props => {
 export default props => {
   const [products, setProducts] = useState([]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     const loadProducts = async () => {
       const res = await api.get('products');
       console.log(res.data);
@@ -44,13 +63,27 @@ export default props => {
     }
 
     loadProducts();
-  }, []);
+  }, []);*/
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const loadProducts = async () => {
+        const res = await api.get('products');
+        console.log(res.data);
+  
+        setProducts(res.data);
+      }
+  
+      loadProducts();
+    }, [])
+  );
+
 
   const { navigation } = props;
   
   return (
     <>
-      <View style={{
+      {/*<View style={{
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0,
@@ -77,7 +110,7 @@ export default props => {
         <View style={{ flex: 1, padding: 10, justifyContent: "center", alignItems: "center" }} >
           <Text style={styles.filterLabel} >Filtros</Text>
         </View>
-      </View>
+      </View>*/}
 
       <FlatList 
         style={{ backgroundColor: "#F2F2F2" }}
