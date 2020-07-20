@@ -1,7 +1,7 @@
 import moment from 'moment';
 
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image,Dimensions, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image,Dimensions, Alert } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -61,9 +61,12 @@ export default props => {
     }, [])
   );
 
-
-  const { navigation } = props;
+  const { navigation, route } = props;
   
+  const  save = route.params && route.params.save? route.params.save: undefined;
+
+  console.log(route)
+
   return (
     <>
       {/*<View style={{
@@ -94,6 +97,11 @@ export default props => {
           <Text style={styles.filterLabel} >Filtros</Text>
         </View>
       </View>*/}
+
+      {save && Alert.alert('Produto salvo com sucesso!')
+        
+
+      }
 
       <FlatList 
         style={{ backgroundColor: "#F2F2F2" }}

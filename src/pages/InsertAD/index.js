@@ -15,13 +15,10 @@ import {
 
 import { useFocusEffect } from '@react-navigation/native';
 
-//GLOBAL.FormData = GLOBAL.originalFormData || GLOBAL.FormData
-
 GLOBAL.FormData = GLOBAL.originalFormData || GLOBAL.FormData
 
 import CheckBox from '@react-native-community/checkbox';
 import { Picker } from '@react-native-community/picker';
-import Icons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import { connect } from 'react-redux';
@@ -30,24 +27,9 @@ import { SignIn } from '../actions';
 
 import api from '../../services/api';
 
-// import ImagePicker from 'react-native-image-crop-picker';
+import ImagePicker from 'react-native-image-picker';
 
-import ImagePicker from 'react-native-image-picker'
-
-
-/*const openCamera = ImagePicker.openCamera({
-  width: 300,
-  height: 400,
-  cropping: true,
-}).then(image => {
-  console.log(image);
-});
-
-const openMultipleImages = ImagePicker.openPicker({
-  multiple: true
-}).then(images => {
-  console.log(images);
-});*/
+import { useDropDown } from '../../contexts';
 
 const InsertAD = props => {
   const { navigation, route, logged } = props;
@@ -56,6 +38,8 @@ const InsertAD = props => {
     navigation.navigate('Login');
     return null;
   }
+
+  const { ref } = useDropDown();
 
   const selected = route.params ? route.params.selected : undefined;
   const subcategory =
@@ -69,7 +53,6 @@ const InsertAD = props => {
   const [checkBox, setCheckBox] = useState(true);
   const [details, setDetails] = useState({});
 
-  const [photo, setPhoto] = useState(null);
   const [images, setImages] = useState([]);
 
   const category = {};
@@ -90,15 +73,9 @@ const InsertAD = props => {
     };
 
     ImagePicker.launchImageLibrary(options, response => {
-
-      console.log(response);
-      if (response.uri) {
-        setPhoto(response)
-
+      if (response.uri) 
         setImages([...images, response]);
-      }
-    })
-
+    });
   }
 
   async function handleSubmit() {
@@ -114,10 +91,8 @@ const InsertAD = props => {
     console.log('------------------------------------------------------------------------------')
 
     if (title && description && !_.isEmpty(category) && cep) {
-
       const data = new FormData();
 
-      //data.append('title', title.toString())
       data.append('title', title)
       data.append('description', description);
       data.append('_category', JSON.stringify(category))
@@ -125,10 +100,6 @@ const InsertAD = props => {
       data.append('price', price)
       data.append('hideNumber', checkBox? 'true': 'false')
       data.append('details', JSON.stringify( details))
-
-     
-    
-
 
       images.forEach((photo, index) => {
         data.append('images', {
@@ -146,7 +117,11 @@ const InsertAD = props => {
         }
       };
 
-      const res = await api.post('/anunciar',   data, config  ).then(value => console.log(value))
+      const res = await api.post('/anunciar', data, config)
+        .then(value => {
+          ref.current.alertWithType("success", "Sucesso!", "Seu produto foi adicionado com exito :)");
+          navigation.navigate('Anúncios')
+        })
         .catch(err => {
           if (err) {
             if (err.response) {
@@ -157,15 +132,6 @@ const InsertAD = props => {
             }
           }
         })
-      
-      //await request.send(data);
-      /*fetch('http://192.168.43.5:3333/anunciar', {
-        method: 'post',
-        body: data
-      }).then(res => {
-        console.log(res)
-      });*/
-
     }
   }
 
@@ -177,65 +143,7 @@ const InsertAD = props => {
       // setPrice('');
       setDetails({});
     }, [])
-  );
-
-
-  //  const imagesData = new FormData();
-
-  const createFormData = () => {
-    const data = new FormData();
-
-/*    data.append("title", title)
-    data.append("description", description);
-    data.append("_category", category)
-    data.append("cep", cep)
-    data.append("price", price)
-    data.append("hideNumber", checkBox)
-    data.append("details", details)*/
-
-    //const imagesData = new FormData();
-
-    images.forEach((image, index) => {
-      data.append('image', {
-        uri:
-          image.uri,
-        type: 'image/jpeg',
-        name: `${title}_${index}.jpg`
-      });
-    });
-
-    console.log(data)
-
-    /*data.append("photo", {
-      name: photo.fileName,
-      type: photo.type,
-      uri:
-        Platform.OS === "android" ? photo.uri : photo.uri.replace("file://", "")
-    });
-
-    Object.keys(body).forEach(key => {
-      data.append(key, body[key]);
-    });/*/
-
-    return data;
-  };
-  // const createFormData = (photo, body) => {
-  //   const data = new FormData();
-
-  //   data.append("photo", {
-  //     name: photo.fileName,
-  //     type: photo.type,
-  //     uri:
-  //       Platform.OS === "android" ? photo.uri : photo.uri.replace("file://", "")
-  //   });
-
-  //   Object.keys(body).forEach(key => {
-  //     data.append(key, body[key]);
-  //   });
-
-  //   return data;
-  // };
-
+  )
 
   return (
     <SafeAreaView>
@@ -268,13 +176,10 @@ const InsertAD = props => {
                   <Text style={{ color: "#6D0AD6", fontWeight: "700" }} >Usar a Camera</Text>
                 </View>
 
-                <View
-
-                  onTouchEnd={
-                    handleChoosePhoto
-                  }
-
-                  style={{ flexDirection: "column", alignItems: "center", marginHorizontal: 30 }} >
+                <View 
+                  onTouchEnd={handleChoosePhoto}
+                  style={{ flexDirection: "column", alignItems: "center", marginHorizontal: 30 }} 
+                >
                   <MaterialIcons name="collections" size={45} color="#6D0AD6" />
                   <Text style={{ color: "#6D0AD6", fontWeight: "700" }} >Escolher da galeria</Text>
                 </View>
@@ -300,22 +205,16 @@ const InsertAD = props => {
           </View>
 
         </View>
-        {/*photo && (
-          <Image
-            source={{ uri: photo.uri }}
-            style={{ width: 50, height: 50 }}
-          />
-        )*/}
 
-        {images.length ? <View style={{ marginVertical: 10, justifyContent: "center", flexDirection: "row" }}>
+        {images.length ? 
+        <View style={{ marginVertical: 10, justifyContent: "center", flexDirection: "row" }}>
           {images.map((image, index) =>
 
             <Image key={index}
               source={{ uri: image.uri }}
-              style={{ width: 50, height: 50 }}
+              style={{ width: 50, height: 50, marginHorizontal: 2.5 }}
             />
           )}
-
         </View> : undefined
         }
         <View style={{ marginHorizontal: 20, marginBottom: 20 }}>
@@ -518,10 +417,7 @@ const InsertAD = props => {
 
                                       :
 
-
-
                                       <TextInput
-
                                         onChangeText={
                                           aux => {
                                             details[item[0]] ?
@@ -545,15 +441,12 @@ const InsertAD = props => {
                                       />
                                     }
                                   </View>
-
-
                                 </View>
                               )}
                             </View>
                         :
                         <Text>{item[1]}</Text>
                       }
-
                     </View>)
                     : undefined
                 )}

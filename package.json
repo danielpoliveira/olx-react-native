@@ -23,6 +23,7 @@
     "moment": "^2.27.0",
     "react": "16.11.0",
     "react-native": "0.62.2",
+    "react-native-dropdownalert": "^4.3.0",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-image-crop-picker": "^0.32.2",
     "react-native-image-picker": "^2.3.3",

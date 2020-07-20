@@ -12,6 +12,8 @@ import { Subcategory } from './Categories/CategoriesOptions';
 import Chat from './Chat';
 import Conversation from './Chat/Conversation';
 import Profile from './Profile';
+import Favorites from './Favorites';
+
 
 import Login from './Login';
 
@@ -23,17 +25,17 @@ const customHeaderStyle = {
 
 export const HomeStack = props => {
 
-  const { navigation } = props;
+  const { navigation, route } = props;
 
   return (
-    <Stack.Navigator  
+    <Stack.Navigator  children={route}
       screenOptions={{
         headerStyle: customHeaderStyle,
         headerTintColor: "#FFF" ,  
       }}
     >
-      <Stack.Screen 
-        name="Anúncios" component={Home} 
+      {/* <Stack.Screen 
+        name="Anúncios"
         options={{
           headerTitle: false,
           headerLeft: () => 
@@ -51,7 +53,30 @@ export const HomeStack = props => {
               </TouchableOpacity>
             </View>)
         }}
-      />
+      >
+        {props => <Home {...props} route={route } />}
+      </Stack.Screen> */}
+
+      <Stack.Screen 
+        name="Anúncios" component={Home} 
+        options={{
+          headerTitle: false,
+          headerLeft: () => 
+            (<TouchableOpacity style={{ paddingLeft: 12.5 }} onPress={() => navigation.openDrawer()}>
+              <MaterialIcons name="menu" size={25} color="#FFF" />
+            </TouchableOpacity>),
+          headerRight: () =>
+            (<View style={{ flexDirection: "row", paddingRight: 12.5}} >
+              <TouchableOpacity style={{marginRight: 10}} >
+                <MaterialIcons name="search" size={25} color="#FFF" />
+              </TouchableOpacity>
+
+              <TouchableOpacity style={{marginLeft: 10}} onPress={() => navigation.navigate('Favoritos')} >
+                <MaterialIcons name="favorite-border" size={25} color="#FFF" />
+              </TouchableOpacity>
+            </View>)
+        }}
+      /> 
 
       <Stack.Screen name="Login" component={Login} />
       
@@ -121,11 +146,14 @@ export const ChatStack = ({ navigation }) => (
 
 export const FavoritesStack = ({ navigation }) => (
   <Stack.Navigator screenOptions={{
+    headerStyle: customHeaderStyle,
+    headerTintColor: "#FFF" ,
     headerLeft: () => 
-      <TouchableOpacity onPress={() => navigation.goBack()} >
-        <MaterialIcons name="arrow-back" size={20} color="#000" />
-      </TouchableOpacity>
-  }} >
+      (<TouchableOpacity style={{ paddingLeft: 12.5 }} onPress={() => navigation.openDrawer()}>
+        <MaterialIcons name="menu" size={25} color="#FFF" />
+      </TouchableOpacity>),
+    }}
+  >
     <Stack.Screen name="Favoritos" component={Favorites} />
   </Stack.Navigator>
 );
@@ -154,8 +182,3 @@ const Notification = () => (
   </View>
 );
 
-const Favorites = () => (
-  <View>
-    <Text>Favorites</Text>
-  </View>
-);
