@@ -56,7 +56,6 @@ setIcon = (name = '', color, size, focused) => {
           { fill: focused ? olxLogoColors[index] : "#444" }} />)}
     </Svg>
   );
-
 }
 
 const screenOptions = ({ route }) => ({
@@ -70,8 +69,6 @@ const Drawer = createDrawerNavigator();
 const Routes = props => {
 
   const { user, navigation } = props;
-
-  console.log(navigation)
 
   useEffect(() => {
     async function checkLogin() {
@@ -113,10 +110,8 @@ const Routes = props => {
                     <Path fill="#FFF" d="M20.75 21v-2A4.75 4.75 0 0 0 16 14.25H8A4.75 4.75 0 0 0 3.25 19v2a.75.75 0 1 0 1.5 0v-2A3.25 3.25 0 0 1 8 15.75h8A3.25 3.25 0 0 1 19.25 19v2a.75.75 0 1 0 1.5 0zM12 11.75a4.75 4.75 0 1 1 0-9.5 4.75 4.75 0 0 1 0 9.5zm0-1.5a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5z" />
                   </Svg>
 
-                  <View 
-//                    onTouchEnd={() => navigation.navigate(user? 'Minha Conta':'Login')}
+                  <View
                     onTouchEnd={() => navigation.navigate('Minha Conta')}
-
                     style={{ flexDirection: "column", marginLeft: 7.5 }} >
                     <Text style={{ fontSize: 16, color: "#FFFFFF" }}>
                       {user ? user.name : 'Acesse sua conta agora!'}
@@ -125,8 +120,6 @@ const Routes = props => {
                       {user ? user.email : 'Clique aqui'}
                     </Text>
                   </View>
-
-
                 </View>
               </View>
               <DrawerItemList {...props} activeTintColor="#EE8101"
@@ -145,7 +138,7 @@ const Routes = props => {
         <Drawer.Screen name="Minha Conta" component={ProfileStack} />
       </Drawer.Navigator>
     </NavigationContainer>
-  )
+  );
 }
 
 const App = (props) =>

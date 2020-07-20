@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 import React, { useState } from 'react';
-import { View, Text, Image,Dimensions, Alert } from 'react-native';
+import { View, Text, Image,Dimensions, Alert, TouchableOpacity } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -20,8 +20,8 @@ const Anuncio = props => {
   const { item, end, navigate } = props;
 
   return (
-    <View 
-      onTouchEnd={() => navigate('Produto', {product: item})}
+    <TouchableOpacity 
+      onPress={() => navigate('Produto', { product: item })}
       style={[
         end ? { marginBottom: 95 } : undefined, {
         height: 130, flexDirection: "row", backgroundColor: "#FFF",
@@ -42,7 +42,7 @@ const Anuncio = props => {
         <Text style={{ fontSize: 17, fontWeight: "600" }}>{item.price? 'R$ ' + item.price: ''}</Text>
         <Text style={{ fontSize: 12 }}>{moment(item.createdAt).format("D [de] MMMM")}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -62,10 +62,6 @@ export default props => {
   );
 
   const { navigation, route } = props;
-  
-  const  save = route.params && route.params.save? route.params.save: undefined;
-
-  console.log(route)
 
   return (
     <>
@@ -98,10 +94,6 @@ export default props => {
         </View>
       </View>*/}
 
-      {save && Alert.alert('Produto salvo com sucesso!')
-        
-
-      }
 
       <FlatList 
         style={{ backgroundColor: "#F2F2F2" }}
@@ -109,9 +101,8 @@ export default props => {
         data={products} renderItem={(item, index) => < Anuncio {...navigation} {...item} end={item.index === products.length - 1 ? true : false}  />}
       />
 
-      <View 
-        onTouchEnd={() => navigation.navigate('Inserir Anúncio')}
-
+      <TouchableOpacity 
+        onPress={() => navigation.navigate('Inserir Anúncio')}
         style={{
           width: 168, height: 60, backgroundColor: "#F18000",
           borderRadius: 35, position: "absolute", bottom: 17.5,
@@ -122,7 +113,7 @@ export default props => {
       >
         <MaterialIcons name="camera-alt" size={25} color="#FFFFFF" />
         <Text style={{ marginLeft: 5, fontSize: 17, color: "#FFFFFF" }} >Anunciar agora</Text>
-      </View>
+      </TouchableOpacity>
 
     </>
   );

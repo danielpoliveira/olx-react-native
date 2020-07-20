@@ -14,6 +14,7 @@ export default (state=INITIAL_STATE, action) => {
     case 'LOGGOUT': return {
       ...state,
       logged: false,
+      user: undefined,
     };
 
     default: return state;

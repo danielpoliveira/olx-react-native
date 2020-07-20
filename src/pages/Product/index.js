@@ -11,6 +11,8 @@ import api from '../../services/api';
 
 import { useDropDown } from '../../contexts';
 
+import ImageSlider from 'react-native-image-slider';
+
 moment.updateLocale('pt-br', {
   months: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
   weekdays: ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado']
@@ -65,7 +67,7 @@ export default ({ navigation, route }) => {
     }
   }
 
-  console.log(favorite)
+  console.log(product.photos)
 
   useEffect(() => {
     async function loadUser() {
@@ -108,10 +110,21 @@ export default ({ navigation, route }) => {
 
 
           {product.photos && product.photos.length ?
-            <Image
+            <ImageSlider images={
+              
+              product.photos.map(photo => {
+                return `http://192.168.0.42:3333/images/${photo}`
+              })
+            } style={{ height: 270, width: 270 }}/>
+            
+            /*<Image
               style={{ height: 270, width: 270 }}
               source={{ uri: `http://192.168.0.42:3333/images/${product.photos[0]}` }}
-            />
+            />*/
+            // <Image
+            //   style={{ height: 270, width: 270 }}
+            //   source={{ uri: `http://192.168.0.42:3333/images/${product.photos[0]}` }}
+            // />
             :
             <View
               style={{ height: 270, width: 150, backgroundColor: "gray" }}

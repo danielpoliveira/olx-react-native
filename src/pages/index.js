@@ -12,6 +12,8 @@ import { Subcategory } from './Categories/CategoriesOptions';
 import Chat from './Chat';
 import Conversation from './Chat/Conversation';
 import Profile from './Profile';
+import MeusAnuncios  from './Profile/Anuncios';
+
 import Favorites from './Favorites';
 
 import Login from './Login';
@@ -191,6 +193,8 @@ export const ProfileStack = ({ navigation }) => (
           </TouchableOpacity>),
       }}
     />
+
+    <Stack.Screen name="Meus Anuncios" component={MeusAnuncios} />
   </Stack.Navigator>
 );
 

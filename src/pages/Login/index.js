@@ -53,16 +53,12 @@ const Login = props => {
         );
 
       }).catch(err => {
-
         const msg = err.response && err.response.data ? err.response.data : undefined;
-
-
         ref
           .current
           .alertWithType("error", "Erro!", msg.error);
-
-
-        console.log(err);
+        
+          console.log(err);
       });
 
     } else {

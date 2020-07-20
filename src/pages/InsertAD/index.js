@@ -65,7 +65,19 @@ const InsertAD = props => {
     }
   }
 
-  const auxCategoryName = selected ? !_.isEmpty(subcategory) ? subcategory.name : selected.category : '';
+  const auxCategoryName = selected ? !_.isEmpty(subcategory) ? subcategory.name : selected.category : 'Selecione uma categoria';
+
+  const handleOpenCamera = () => {
+    const options = {
+      noData: true,
+    };
+
+    ImagePicker.launchCamera(options, response => {
+      if(response.uri) {
+        setImages([...images, response]);
+      }
+    })
+  }
 
   const handleChoosePhoto = () => {
     const options = {
@@ -149,9 +161,7 @@ const InsertAD = props => {
     <SafeAreaView>
       <ScrollView>
         <View style={{ backgroundColor: "#dfdfdf" }} >
-
           <View
-
             style={{
               height: 250, margin: 20,
               justifyContent: "center", alignItems: "center",
@@ -161,28 +171,20 @@ const InsertAD = props => {
             <View style={{ flexDirection: "column", alignItems: "center", justifyContent: "center" }} >
 
               <View style={{ flexDirection: "row" }} >
-                <View
-                  onTouchEnd={
-                    () => ImagePicker.openCamera({
-                      width: 300,
-                      height: 400,
-                      cropping: true,
-                    }).then(image => {
-                      console.log(image);
-                    })
-                  }
+                <TouchableOpacity
+                  onPress={handleOpenCamera}
                   style={{ flexDirection: "column", alignItems: "center", marginHorizontal: 30 }} >
                   <MaterialIcons name="add-a-photo" size={45} color="#6D0AD6" />
                   <Text style={{ color: "#6D0AD6", fontWeight: "700" }} >Usar a Camera</Text>
-                </View>
+                </TouchableOpacity>
 
-                <View 
-                  onTouchEnd={handleChoosePhoto}
+                <TouchableOpacity 
+                  onPress={handleChoosePhoto}
                   style={{ flexDirection: "column", alignItems: "center", marginHorizontal: 30 }} 
                 >
                   <MaterialIcons name="collections" size={45} color="#6D0AD6" />
                   <Text style={{ color: "#6D0AD6", fontWeight: "700" }} >Escolher da galeria</Text>
-                </View>
+                </TouchableOpacity>
               </View>
 
               <View style={{ flexDirection: "row", position: "absolute", bottom: -70, justifyContent: "center", alignItems: "center" }} >
@@ -190,17 +192,6 @@ const InsertAD = props => {
               </View>
 
             </View>
-
-            {/* <View style={{ flexDirection: "column", alignItems: "center" }} >
-
-              <Icons name="camera-outline" size={45} color="#6D0AD6" />
-              <Text style={{
-
-                color: "#6D0AD6", fontWeight: "700"
-              }} >Incluir Fotos</Text>
-              <Text>0 de 6 adicionados</Text>
-            </View> */}
-
 
           </View>
 
@@ -212,7 +203,7 @@ const InsertAD = props => {
 
             <Image key={index}
               source={{ uri: image.uri }}
-              style={{ width: 50, height: 50, marginHorizontal: 2.5 }}
+              style={{ width: 50, height: 50, marginHorizontal: 2.5, borderRadius: 5 }}
             />
           )}
         </View> : undefined
@@ -266,8 +257,7 @@ const InsertAD = props => {
               fontSize: 16
             }} >Categoria*</Text>
 
-            <TouchableOpacity onPress={() => { navigation.navigate('Categorias'); setDetails({}) }} >
-              <View
+            <TouchableOpacity onPress={() => { navigation.navigate('Categorias'); setDetails({}) }} 
                 style={{
                   flexDirection: "row",
                   justifyContent: "space-between",
@@ -281,7 +271,7 @@ const InsertAD = props => {
               >
                 <Text style={{ color: "#aaa" }}>{auxCategoryName}</Text>
                 <MaterialIcons name="keyboard-arrow-right" size={30} color="#777" />
-              </View>
+            
             </TouchableOpacity>
 
           </View>

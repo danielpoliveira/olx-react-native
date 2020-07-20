@@ -1,24 +1,29 @@
 import moment from 'moment';
 
 import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
-
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 
 import { useDropDown } from '../../contexts';
 
 import api from '../../services/api';
+import { useFocusEffect } from '@react-navigation/native';
+
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
+
+import { connect } from 'react-redux';
 
 moment.updateLocale('pt-br', {
   months: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
   weekdays: ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado']
 });
 
-export default props => {
+const Anuncios = props => {
   const [products, setProducts] = useState([]);
 
-  const { navigation } = props;
+  const { navigation, user } = props;
+
+  console.log('valor de user ', user)
 
   const Anuncio = props => {
     const { item, end, navigate, index } = props;
@@ -26,21 +31,27 @@ export default props => {
     const { ref } = useDropDown();
 
     const handleRemoveFavorite = async () => {
-      const res = await api.delete(`favorite/${item.productId._id}`)
+
+      console.log(user._id)
+      const res = await api.delete(`product/${item._id}`)
         .then(res => {
-          setProducts(products.filter(product => product.productId._id !==  item.productId._id))
+          setProducts(products.filter(product => product._id !==  item._id))
           ref.current.alertWithType("success", "Sucesso!", "Produto removido dos favoritos :)");
         })
         .catch(err => {
+
+          console.log(err.response.data)
           ref.current.alertWithType("error", "Erro!", "Não foi possivel remover o produto dos favoritos");
         })
+
+      console.log('aqui');
     }
 
     return (
       <View
-        //onTouchEnd={() => navigate('Produto', {product: item.productId})}
+        //onTouchEnd={() => navigate('Produto', {product: item})}
         style={[
-          end ? { marginBottom: 35 } : undefined, 
+           end ? { marginBottom: 30} : undefined, 
           {
             height: 130, flexDirection: "row", backgroundColor: "#FFF",
             marginTop: 7.5,
@@ -58,8 +69,8 @@ export default props => {
         <View style={{ flexDirection: "row", flex: 1, justifyContent: "space-between", alignItems: "center", padding: 15 }} >
 
           <View style={{ height: "100%", maxWidth: 220,flexDirection: "column", justifyContent: "space-between" }} >
-            <Text style={{ fontSize: 14, fontWeight: "100", }}>{item.productId.title}</Text>
-            <Text style={{ fontSize: 17, fontWeight: "600" }}>{item.productId.price ? 'R$ ' + item.productId.price : ''}</Text>
+            <Text style={{ fontSize: 14, fontWeight: "100", }}>{item.title}</Text>
+            <Text style={{ fontSize: 17, fontWeight: "600" }}>{item.price ? 'R$ ' + item.price : ''}</Text>
             <Text style={{ fontSize: 12 }}>{moment(item.createdAt).format("D [de] MMMM [às] HH:mm")}</Text>
           </View>
 
@@ -72,29 +83,36 @@ export default props => {
     );
   }
 
-
   useFocusEffect(
     React.useCallback(() => {
-      const loadFavorites = async () => {
-        const res = await api.get('favorites');
+      const loadMyProducts = async () => {
+        const res = await api.get(`products/user/${user._id}`) 
+
+        console.log(res.data)
 
         setProducts(res.data);
       }
-      loadFavorites();
+
+      loadMyProducts();
     }, [])
   );
 
-  return (<View>
-
-    <FlatList style={{ backgroundColor: "#F2F2F2" }}
+  return (
+    <View>
+      <FlatList style={{ backgroundColor: "#F2F2F2" }}
       keyExtractor={(item, index) => index.toString()}
       data={products}
       renderItem={(item, index) => 
-        < Anuncio {...item} {...navigation} 
-          end={item.index === products.length - 1 ? true : false}
-        />
-      }
+      < Anuncio {...item} {...navigation} 
+            end={item.index === products.length - 1 ? true : false}
+      />}
     />
-
-  </View>);
+    </View>
+  );
 }
+
+const mapStateToProps = state => ({
+  user: state.app.user,
+});
+
+export default connect(mapStateToProps, undefined)(Anuncios);
