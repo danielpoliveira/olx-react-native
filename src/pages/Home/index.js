@@ -1,18 +1,16 @@
+import moment from 'moment';
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image,Dimensions, StyleSheet } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-
 import { useFocusEffect } from '@react-navigation/native';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
-import moment from 'moment';
 
 moment.updateLocale('pt-br', {
   months:   ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
   weekdays: ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado']
 });
-
 
 import api from '../../services/api';
 
@@ -20,8 +18,6 @@ const screen = Dimensions.get("screen").width;
 
 const Anuncio = props => {
   const { item, end, navigate } = props;
-
-  console.log(item.photos )
 
   return (
     <View 
@@ -44,7 +40,6 @@ const Anuncio = props => {
       <View style={{ flexDirection: "column", justifyContent: "space-between", padding: 15 }} >
         <Text style={{ fontSize: 14, fontWeight: "100", }}>{item.title}</Text>
         <Text style={{ fontSize: 17, fontWeight: "600" }}>{item.price? 'R$ ' + item.price: ''}</Text>
-        {/* <Text style={{ fontSize: 12 }}>{item.createdAt}</Text> */}
         <Text style={{ fontSize: 12 }}>{moment(item.createdAt).format("D [de] MMMM")}</Text>
       </View>
     </View>
@@ -54,22 +49,10 @@ const Anuncio = props => {
 export default props => {
   const [products, setProducts] = useState([]);
 
-  /*useEffect(() => {
-    const loadProducts = async () => {
-      const res = await api.get('products');
-      console.log(res.data);
-
-      setProducts(res.data);
-    }
-
-    loadProducts();
-  }, []);*/
-
   useFocusEffect(
     React.useCallback(() => {
       const loadProducts = async () => {
         const res = await api.get('products');
-        console.log(res.data);
   
         setProducts(res.data);
       }
@@ -136,10 +119,3 @@ export default props => {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  filterLabel: {
-    color: "#6210CE",
-    fontSize: 18,
-  },
-});

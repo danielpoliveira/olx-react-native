@@ -1,5 +1,6 @@
 const INITIAL_STATE = {
   logged: false,
+  user: undefined,
 };
 
 export default (state=INITIAL_STATE, action) => {
@@ -7,6 +8,7 @@ export default (state=INITIAL_STATE, action) => {
     case 'LOGGED': return {
       ...state,
       logged: true,
+      user: action.payload
     };
     
     case 'LOGGOUT': return {

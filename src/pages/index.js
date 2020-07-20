@@ -82,8 +82,9 @@ export const InsertADStack = ({ navigation }) => {
     <Stack.Screen name="Categorias" component={Categories} />
     <Stack.Screen name="Subcategoria" component={Subcategory} />
   </Stack.Navigator>
-);
+  );
 }
+
 export const NotificationStack = ({ navigation }) => (
   <Stack.Navigator screenOptions={{
     headerLeft: () => 
@@ -112,11 +113,7 @@ export const ChatStack = ({ navigation }) => (
     />
 
     <Stack.Screen name="Conversa" component={Conversation} 
-      
       options={({ route }) => ({ title: route.params.user.username })}
-
-      
-
     />
 
   </Stack.Navigator>

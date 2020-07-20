@@ -1,9 +1,9 @@
-import React, {useEffect} from 'react';
-import { View, Text, StatusBar, StyleSheet} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StatusBar, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator, DrawerItemList } from '@react-navigation/drawer';
 
-import Svg, { Path }  from 'react-native-svg';
+import Svg, { Path } from 'react-native-svg';
 
 import { HomeStack, InsertADStack, ChatStack, FavoritesStack, NotificationStack, ProfileStack } from './pages/index';
 
@@ -13,22 +13,23 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { SignIn, Loggout } from './pages/actions';
 
+import api from './services/api';
+
 import jwtDecode from 'jwt-decode';
 
 setIcon = (name = '', color, size, focused) => {
-  // console.log("valor de name -------> ", name);
-  
+
   const d = [];
 
   const olxLogoColors = ["#6E0AD6", "#8CE563", "#F28000"];
 
-  switch(name) {
-    case "Anúncios": 
+  switch (name) {
+    case "Anúncios":
       d[0] = "M7.579 26.294c-2.282 0-3.855-1.89-3.855-4.683 0-2.82 1.573-4.709 3.855-4.709 2.28 0 3.855 1.889 3.855 4.682 0 2.82-1.574 4.71-3.855 4.71m0 3.538c4.222 0 7.578-3.512 7.578-8.248 0-4.682-3.173-8.22-7.578-8.22C3.357 13.363 0 16.874 0 21.61c0 4.763 3.173 8.221 7.579 8.221";
       d[1] = "M18.278 23.553h7.237c.499 0 .787-.292.787-.798V20.44c0-.505-.288-.798-.787-.798h-4.851V9.798c0-.505-.288-.798-.787-.798h-2.386c-.498 0-.787.293-.787.798v12.159c0 1.038.551 1.596 1.574 1.596";
       d[2] = "M28.112 29.593l4.353-5.082 4.222 5.082c.367.452.839.452 1.258.08l1.705-1.517c.42-.373.472-.851.079-1.277l-4.694-5.321 4.274-4.869c.367-.426.34-.878-.078-1.277l-1.6-1.463c-.42-.4-.892-.373-1.259.08l-3.907 4.602-3.986-4.603c-.367-.425-.84-.479-1.259-.08l-1.652 1.49c-.42.4-.446.825-.053 1.278l4.354 4.868-4.747 5.348c-.393.452-.34.905.079 1.277l1.652 1.464c.42.372.891.345 1.259-.08";
       break;
-    case "Inserir Anúncio": 
+    case "Inserir Anúncio":
       d[0] = "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z";
       break;
     case "Notificações":
@@ -47,17 +48,19 @@ setIcon = (name = '', color, size, focused) => {
       d[0] = "M13.06 12l5.47 5.47a.75.75 0 0 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 1.06-1.06L12 10.94l5.47-5.47a.75.75 0 0 1 1.06 1.06L13.06 12z";
   }
 
-  return <>
-    <Svg viewBox="0 0 40 40"  width="30" height="30" >
+  return (
+
+    <Svg viewBox="0 0 40 40" width="30" height="30" >
       {d.map((srcPath, index) => <Path key={index} d={srcPath}
-       {...name !== "Anúncios"? { transform:"translate(1.75,1.5)", scaleX:1.5, scaleY:1.5,  fill: focused? "orange": "#444"} :  
-        {fill: focused? olxLogoColors[index]: "#444" } }  />)}
+        {...name !== "Anúncios" ? { transform: "translate(1.75,1.5)", scaleX: 1.5, scaleY: 1.5, fill: focused ? "orange" : "#444" } :
+          { fill: focused ? olxLogoColors[index] : "#444" }} />)}
     </Svg>
-  </>
+  );
+
 }
 
 const screenOptions = ({ route }) => ({
-  drawerIcon: ({ focused, color, size }) => {  
+  drawerIcon: ({ focused, color, size }) => {
     const Icon = setIcon(route.name, color, size, focused);
     return Icon;
   }
@@ -66,68 +69,65 @@ const screenOptions = ({ route }) => ({
 const Drawer = createDrawerNavigator();
 const Routes = props => {
 
+  const { user } = props;
+
   useEffect(() => {
     async function checkLogin() {
+
       const token = await isLogged();
 
-      if(token) {
+      if (token) {
         const decoded = jwtDecode(token);
 
-        console.log(decoded)
-
-        if(decoded && decoded.exp < Date.now() / 1000 ) {
-          
+        if (decoded && decoded.exp < Date.now() / 1000) {
           await clearToken();
-  
-          props.Loggout();
-        } else if(!props.logged) {
-          
-          props.SignIn();
-        }
-      } 
 
-      console.log('valor de t ------------>', token);
+          props.Loggout();
+        } else if (!props.logged) {
+          const id = decoded.id;
+
+          if (id) 
+            props.SignIn(id);
+        }
+      }
     }
 
     checkLogin();
-  }, []) ;
+  }, []);
 
   return (
     <NavigationContainer>
-      <Drawer.Navigator 
-      screenOptions={screenOptions}
-      drawerContent={
-        props => {
-          // console.log("valor de props: ------> ", props);
-         return <>
-          <View style={{ paddingTop: StatusBar.currentHeight, backgroundColor: "#6D0AD6" }}>
-            <View  style={{paddingVertical: 25,justifyContent: "center", flexDirection: "row", alignItems: "center"}} >  
-              <Svg width="35" height="35" viewBox="0 0 24 24" style={{ marginRight: 7.5 }} >
-                <Path fill="#FFF" d="M20.75 21v-2A4.75 4.75 0 0 0 16 14.25H8A4.75 4.75 0 0 0 3.25 19v2a.75.75 0 1 0 1.5 0v-2A3.25 3.25 0 0 1 8 15.75h8A3.25 3.25 0 0 1 19.25 19v2a.75.75 0 1 0 1.5 0zM12 11.75a4.75 4.75 0 1 1 0-9.5 4.75 4.75 0 0 1 0 9.5zm0-1.5a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5z"/>
-              </Svg>
+      <Drawer.Navigator
+        screenOptions={screenOptions}
+        drawerContent={
+          props => {
+            // console.log("valor de props: ------> ", props);
+            return <>
+              <View style={{ paddingTop: StatusBar.currentHeight, backgroundColor: "#6D0AD6" }}>
+                <View style={{ paddingVertical: 25, justifyContent: "center", flexDirection: "row", alignItems: "center" }} >
+                  <Svg width="35" height="35" viewBox="0 0 24 24" style={{ marginRight: 7.5 }} >
+                    <Path fill="#FFF" d="M20.75 21v-2A4.75 4.75 0 0 0 16 14.25H8A4.75 4.75 0 0 0 3.25 19v2a.75.75 0 1 0 1.5 0v-2A3.25 3.25 0 0 1 8 15.75h8A3.25 3.25 0 0 1 19.25 19v2a.75.75 0 1 0 1.5 0zM12 11.75a4.75 4.75 0 1 1 0-9.5 4.75 4.75 0 0 1 0 9.5zm0-1.5a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5z" />
+                  </Svg>
 
-              <View style={{flexDirection: "column", marginLeft: 7.5}} >
-                <Text style={{fontSize: 16, color: "#FFFFFF"}}>Acesse sua conta agora!</Text>
-                <Text style={{fontSize: 13, color: "#FFFFFF"}}>Clique aqui</Text>
-
+                  <View style={{ flexDirection: "column", marginLeft: 7.5 }} >
+                    <Text style={{ fontSize: 16, color: "#FFFFFF" }}>
+                      {user ? user.name : 'Acesse sua conta agora!'}
+                    </Text>
+                    <Text style={{ fontSize: 13, color: "#FFFFFF" }}>
+                      {user ? user.email : 'Clique aqui'}
+                    </Text>
+                  </View>
+                </View>
               </View>
-            </View>
-          </View>
-          <DrawerItemList {...props} activeTintColor="#EE8101" 
-            itemStyle={{ backgroundColor: "#FFF" }} 
-          />
-        </>
-        }
-      }>
-        <Drawer.Screen name="Anúncios" component={HomeStack} options={{
+              <DrawerItemList {...props} activeTintColor="#EE8101"
+                itemStyle={{ backgroundColor: "#FFF" }}
+              />
+            </>
+          }
+        }>
+        <Drawer.Screen name="Anúncios" component={HomeStack} options={{}} />
 
-          
-        }} />
-
-        <Drawer.Screen name="Inserir Anúncio" component={InsertADStack} options={{
-
-          
-        }} />
+        <Drawer.Screen name="Inserir Anúncio" component={InsertADStack} options={{}} />
 
         {/* <Drawer.Screen name="Notificações" component={NotificationStack} /> */}
         <Drawer.Screen name="Chat" component={ChatStack} />
@@ -140,17 +140,18 @@ const Routes = props => {
 
 const App = (props) =>
   <>
-    <StatusBar      
-    translucent
-    backgroundColor="rgba(0, 0, 0, 0.20)"
-    animated
+    <StatusBar
+      translucent
+      backgroundColor="rgba(0, 0, 0, 0.20)"
+      animated
     />
 
-    <Routes {...props}/>
+    <Routes {...props} />
   </>
 
 const mapStateToProps = state => ({
-  logged: state.app.logged
+  logged: state.app.logged,
+  user: state.app.user,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({

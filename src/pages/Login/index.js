@@ -15,21 +15,22 @@ const Login = props => {
   const [password, setPassword] = useState('');
 
   async function handleSubmit() {
-    try {
-      const res = await api.post('/auth/entrar', {
-        email,
-        password,
-      });
-
-      await onSignIn(res.data.token).then(
+    
+    const res = await api.post('/auth/entrar', {
+      email,
+      password,
+    }).then(async res => {
+      const { user, token } = res.data
+      await onSignIn(token).then(
         () => {
-          SignIn()
+          SignIn(user)
           navigation.navigate('Anúncios')
         }
       );
-    } catch (err) {
+
+    }).catch(err => {
       console.log(err);
-    }
+    });
   }
 
   return (
