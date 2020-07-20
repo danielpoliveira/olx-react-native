@@ -14,8 +14,8 @@ import Conversation from './Chat/Conversation';
 import Profile from './Profile';
 import Favorites from './Favorites';
 
-
 import Login from './Login';
+import SignUp from './SignUp';
 
 const Stack = createStackNavigator();
 
@@ -79,8 +79,27 @@ export const HomeStack = props => {
       /> 
 
       <Stack.Screen name="Login" component={Login} />
+
+      <Stack.Screen name="Cadastrar" component={SignUp} />
+
+      <Stack.Screen name="Produto" component={Product}
+        options={{}} 
+      /> 
       
-      <Stack.Screen name="Produto" component={Product}  />
+      {/* <Stack.Screen name="Produto"
+        options={{
+          headerRight: () =>
+          (<View style={{ flexDirection: "row", paddingRight: 12.5}} >
+            <TouchableOpacity style={{marginLeft: 10}} onPress={ han } >
+              <MaterialIcons name="favorite-border" size={25} color="#FFF" />
+            </TouchableOpacity>
+          </View>)
+        }} 
+      >
+        {props => <Product {...product} />}
+      </Stack.Screen> */}
+
+
     </Stack.Navigator>
   ); 
 

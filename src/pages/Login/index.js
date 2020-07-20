@@ -8,29 +8,70 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { SignIn } from '../actions';
 
+import { useDropDown } from '../../contexts';
+
+const checkEmpty = obj => {
+  const errors = [];
+
+  for (let elem in obj)
+    if (typeof obj[elem] === 'object' && !obj[elem].length || !obj[elem]) {
+      errors.push({
+        message: '\'' + elem + '\'' + ' is empty',
+        label: elem,
+      });
+    }
+
+  if (!errors.length)
+    return false;
+
+  return errors;
+}
+
 const Login = props => {
   const { navigation, SignIn } = props;
-  
+
+  const { ref } = useDropDown();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   async function handleSubmit() {
-    
-    const res = await api.post('/auth/entrar', {
-      email,
-      password,
-    }).then(async res => {
-      const { user, token } = res.data
-      await onSignIn(token).then(
-        () => {
-          SignIn(user)
-          navigation.navigate('Anúncios')
-        }
-      );
+    const empty = checkEmpty({ email, password });
 
-    }).catch(err => {
-      console.log(err);
-    });
+    if (!empty) {
+
+      const res = await api.post('/auth/entrar', {
+        email,
+        password,
+      }).then(async res => {
+        const { user, token } = res.data
+        await onSignIn(token).then(
+          () => {
+            SignIn(user)
+            navigation.navigate('Anúncios')
+          }
+        );
+
+      }).catch(err => {
+
+        const msg = err.response && err.response.data ? err.response.data : undefined;
+
+
+        ref
+          .current
+          .alertWithType("error", "Erro!", msg.error);
+
+
+        console.log(err);
+      });
+
+    } else {
+      ref
+        .current
+        .alertWithType("error", "Erro!", empty.map(item => item.message + '\n'));
+    }
+
+
   }
 
   return (
@@ -79,25 +120,29 @@ const Login = props => {
       </View>
 
       <View style={{ marginVertical: 10 }}>
-        <TouchableOpacity 
+        <TouchableOpacity
           onPress={handleSubmit}
           style={{
             borderRadius: 25,
             justifyContent: "center", flexDirection: "row", alignItems: "center", padding: 15, backgroundColor: "#F88323"
-          }} 
+          }}
         >
           <Text style={{ color: "#FFF", fontSize: 17 }}>Entrar</Text>
         </TouchableOpacity>
       </View>
 
-      <View style={{
-        padding: 30,
-        marginTop: 15,
-        borderTopWidth: StyleSheet.hairlineWidth,
-        borderColor: "#000",
+      <View
 
-        justifyContent: "center", alignItems: "center",
-      }}>
+        onTouchEnd={() => navigation.navigate('Cadastrar')}
+
+        style={{
+          padding: 30,
+          marginTop: 15,
+          borderTopWidth: StyleSheet.hairlineWidth,
+          borderColor: "#000",
+
+          justifyContent: "center", alignItems: "center",
+        }}>
         <Text>Não tem uma conta? <Text style={{ color: "#6D0AD6", fontWeight: "bold" }}>Cadastre-se</Text></Text>
       </View>
     </View>
