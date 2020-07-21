@@ -1,6 +1,9 @@
 import React from 'react'; 
+import { YellowBox } from "react-native";
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux'
+
+YellowBox.ignoreWarnings([""]);
 
 import reducers from './src/main/reducers';
 
