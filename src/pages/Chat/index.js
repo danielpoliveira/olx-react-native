@@ -1,8 +1,10 @@
 import React from 'react';
 import { View, Text, SafeAreaView, FlatList, StyleSheet } from 'react-native';
 
+import { connect } from 'react-redux';
+
 const DATA = [
-  { id: "00", title: "Fones de ouvido", username: "Daniel", data: "Dom, 21 de Jul" }, 
+  { id: "00", title: "<Product name>", username: "Daniel", data: "Dom, 21 de Jul" }, 
   /*{ id: "01", title: "Fones de ouvido", username: "Jennifer Santos", data: "Dom, 21 de Jun" }, 
   { id: "02", title: "Fones de ouvido", username: "Jennifer Santos", data: "Dom, 21 de Jun" }, 
   { id: "03", title: "Fones de ouvido", username: "Jennifer Santos", data: "Dom, 21 de Jun" }, 
@@ -13,51 +15,56 @@ const DATA = [
   { id: "08", title: "Fones de ouvido", username: "Jennifer Santos", data: "Dom, 21 de Jun" }, */
 ];
 
-const RenderItem = props => {
-  const { navigate } = props;
-  const user = props.item;
+const Chat = props => { 
+  const { navigation, logged } = props;
 
-  return (
-    <View 
-      onTouchEnd={() => navigate('Conversa', { user })}
-      style={{
-        flexDirection: "row", alignItems: "center"}} 
-    >
+  if (!logged) {
+    navigation.navigate('Login');
+    return null;
+  }
+
+  const RenderItem = props => {
+    const { navigate } = props;
+    const user = props.item;
+  
+    return (
       <View 
+        onTouchEnd={() => navigate('Conversa', { user })}
         style={{
-          borderRadius: 5,
-          margin: 15,
-          width: 60, height: 60, backgroundColor: "gray"
-        }}
-      />
-
-      <View style={{
-        flex:1,
-        paddingVertical: 20,
-        paddingRight: 10,
-        height: 90,
-        
-        flexDirection: "row",
-        justifyContent: "space-between",
-        borderColor: "#AAA",
-        borderBottomWidth: StyleSheet.hairlineWidth,
-      }}
+          flexDirection: "row", alignItems: "center"}} 
       >
-        <View>
-          <Text style={{fontWeight: "bold", fontSize: 15}} >{user.title}</Text>
-          <Text style={{marginVertical: 5}}>{user.username}</Text>
-        </View>
-
-        <View>
-          <Text style={{color: "#888", fontSize: 12}}>{user.data}</Text>
+        <View 
+          style={{
+            borderRadius: 5,
+            margin: 15,
+            width: 60, height: 60, backgroundColor: "gray"
+          }}
+        />
+  
+        <View style={{
+          flex:1,
+          paddingVertical: 20,
+          paddingRight: 10,
+          height: 90,
+          
+          flexDirection: "row",
+          justifyContent: "space-between",
+          borderColor: "#AAA",
+          borderBottomWidth: StyleSheet.hairlineWidth,
+        }}
+        >
+          <View>
+            <Text style={{fontWeight: "bold", fontSize: 15}} >{user.title}</Text>
+            <Text style={{marginVertical: 5}}>{user.username}</Text>
+          </View>
+  
+          <View>
+            <Text style={{color: "#888", fontSize: 12}}>{user.data}</Text>
+          </View>
         </View>
       </View>
-    </View>
-  )
-}
-
-export default props => { 
-  const { navigation } = props;
+    )
+  }
 
   return (
     <SafeAreaView>
@@ -65,3 +72,10 @@ export default props => {
     </SafeAreaView>
   );
 }
+
+
+const mapStateToProps = state => ({
+  logged: state.app.logged,
+});
+
+export default connect(mapStateToProps, undefined)(Chat);

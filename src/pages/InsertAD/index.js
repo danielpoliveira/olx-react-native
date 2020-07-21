@@ -10,7 +10,6 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
-  Alert,
 } from 'react-native';
 
 import { useFocusEffect } from '@react-navigation/native';
@@ -75,9 +74,8 @@ const InsertAD = props => {
     };
 
     ImagePicker.launchCamera(options, response => {
-      if (response.uri) {
+      if (response.uri && images.length < 6)
         setImages([...images, response]);
-      }
     })
   }
 
@@ -87,7 +85,7 @@ const InsertAD = props => {
     };
 
     ImagePicker.launchImageLibrary(options, response => {
-      if (response.uri)
+      if (response.uri && images.length < 6)
         setImages([...images, response]);
     });
   }
@@ -123,11 +121,12 @@ const InsertAD = props => {
         .then(value => {
           
           setDestroy(true);
-
+          setImages([])
           route.params = undefined;
 
           ref.current.alertWithType("success", "Sucesso!", "Seu produto foi adicionado com exito :)");
-          navigation.navigate('Anúncios')
+          // navigation.navigate('Anúncios')
+          navigation.navigate('Home')
         })
         .catch(err => {
           if (err) {
@@ -514,7 +513,7 @@ const InsertAD = props => {
 }
 
 const mapStateToProps = state => ({
-  logged: state.app.logged
+  logged: state.app.logged,
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({

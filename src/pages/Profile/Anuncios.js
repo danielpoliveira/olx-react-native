@@ -36,7 +36,7 @@ const Anuncios = props => {
       const res = await api.delete(`product/${item._id}`)
         .then(res => {
           setProducts(products.filter(product => product._id !==  item._id))
-          ref.current.alertWithType("success", "Sucesso!", "Produto removido dos favoritos :)");
+          ref.current.alertWithType("success", "Sucesso!", "Seu anúncio foi removido da OLX :)");
         })
         .catch(err => {
 
@@ -48,8 +48,8 @@ const Anuncios = props => {
     }
 
     return (
-      <View
-        //onTouchEnd={() => navigate('Produto', {product: item})}
+      <TouchableOpacity
+        onPress={() => navigate('Produto', {product: item})}
         style={[
            end ? { marginBottom: 30} : undefined, 
           {
@@ -79,7 +79,7 @@ const Anuncios = props => {
           </TouchableOpacity>
           {/*<Text style={{ fontSize: 12 }}>{moment(item.createdAt).format("D [de] MMMM")}</Text>*/}
         </View>
-      </View>
+      </TouchableOpacity>
     );
   }
 

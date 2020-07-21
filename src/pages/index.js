@@ -30,7 +30,7 @@ export const HomeStack = props => {
   const { navigation, route } = props;
 
   return (
-    <Stack.Navigator  children={route}
+    <Stack.Navigator
       screenOptions={{
         headerStyle: customHeaderStyle,
         headerTintColor: "#FFF" ,  
@@ -60,7 +60,7 @@ export const HomeStack = props => {
       </Stack.Screen> */}
 
       <Stack.Screen 
-        name="Anúncios" component={Home} 
+        name="Home" component={Home} 
         options={{
           headerTitle: false,
           headerLeft: () => 
@@ -80,7 +80,17 @@ export const HomeStack = props => {
         }}
       /> 
 
-      <Stack.Screen name="Login" component={Login} />
+      <Stack.Screen 
+      
+      
+      name="Login" component={Login} options={{
+        headerLeft: () => 
+        (<TouchableOpacity style={{ paddingLeft: 12.5 }} 
+        // onPress={() => navigation.navigate('Cadastrar')}>
+        onPress={() => navigation.navigate('Home')}>
+          <MaterialIcons name="arrow-back" size={25} color="#FFF" />
+        </TouchableOpacity>),
+      }} />
 
       <Stack.Screen name="Cadastrar" component={SignUp} />
 

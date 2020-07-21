@@ -42,8 +42,6 @@ const SignUp = props => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [number, setNumber] = useState('');
-  
-  const [emptyField, setEmptyField] = useState(null);
 
   async function handleSubmit() {
     
@@ -68,7 +66,8 @@ const SignUp = props => {
             .current
             .alertWithType("success", "Sucesso!", 'Conta criada com sucesso :)');    
 
-            navigation.navigate('Anúncios');
+            //navigation.navigate('Anúncios');
+            navigation.navigate('Home');
           }
         );
       })

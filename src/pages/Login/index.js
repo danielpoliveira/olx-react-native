@@ -47,7 +47,8 @@ const Login = props => {
         await onSignIn(token).then(
           () => {
             SignIn(user)
-            navigation.navigate('Anúncios')
+            //navigation.navigate('Anúncios')
+            navigation.navigate('Home')
           }
         );
 
