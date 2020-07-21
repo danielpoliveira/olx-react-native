@@ -39,7 +39,6 @@ const Login = props => {
     const empty = checkEmpty({ email, password });
 
     if (!empty) {
-
       const res = await api.post('/auth/entrar', {
         email,
         password,
@@ -60,7 +59,6 @@ const Login = props => {
         
           console.log(err);
       });
-
     } else {
       ref
         .current
@@ -100,7 +98,7 @@ const Login = props => {
           <Text style={{
             color: "#555", fontWeight: "bold"
           }}>Senha</Text>
-          <Text style={{ color: "#6D0AD6", fontWeight: "bold" }}>Esqueceu sua senha?</Text>
+          {/* <Text style={{ color: "#6D0AD6", fontWeight: "bold" }}>Esqueceu sua senha?</Text> */}
         </View>
         <TextInput
           value={password}
@@ -127,9 +125,9 @@ const Login = props => {
         </TouchableOpacity>
       </View>
 
-      <View
+      <TouchableOpacity
 
-        onTouchEnd={() => navigation.navigate('Cadastrar')}
+        onPress={() => navigation.navigate('Cadastrar')}
 
         style={{
           padding: 30,
@@ -140,7 +138,7 @@ const Login = props => {
           justifyContent: "center", alignItems: "center",
         }}>
         <Text>Não tem uma conta? <Text style={{ color: "#6D0AD6", fontWeight: "bold" }}>Cadastre-se</Text></Text>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 }

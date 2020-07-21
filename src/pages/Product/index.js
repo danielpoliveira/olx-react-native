@@ -2,7 +2,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, SafeAreaView, ScrollView, Dimensions, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, Dimensions, StyleSheet, Image, YellowBox, TouchableOpacity } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -12,6 +12,8 @@ import api from '../../services/api';
 import { useDropDown } from '../../contexts';
 
 import ImageSlider from 'react-native-image-slider';
+
+YellowBox.ignoreWarnings(['Warning: componentwillmount has been renamed and is not recommended for use.']);
 
 moment.updateLocale('pt-br', {
   months: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
@@ -27,7 +29,7 @@ export default ({ navigation, route }) => {
   const { ref } = useDropDown();
 
   const onFavoritePressed = () => {
-    setFavoriteIcon({ name: favoriteIcon.name === "favorite"?  "favorite-border": "favorite" });
+    setFavoriteIcon({ name: favoriteIcon.name === "favorite" ? "favorite-border" : "favorite" });
   }
 
   navigation.setOptions({
@@ -48,12 +50,12 @@ export default ({ navigation, route }) => {
   const [favoriteIcon, setFavoriteIcon] = useState({ name: "favorite-border" });
 
   const handleFavorite = () => {
-    if(!_.isEmpty(favorite)){
+    if (!_.isEmpty(favorite)) {
       const res = api.delete(`/favorite/${product._id}`).then(value => {
         setFavoriteIcon({ name: "favorite-border" });
 
         setFavorite(null);
-        
+
         ref.current.alertWithType("success", "Sucesso!", "Produto removido dos favoritos :)");
       })
     } else {
@@ -67,8 +69,6 @@ export default ({ navigation, route }) => {
     }
   }
 
-  console.log(product.photos)
-
   useEffect(() => {
     async function loadUser() {
       const res = await api.get(`/user/${userId}`);
@@ -81,7 +81,7 @@ export default ({ navigation, route }) => {
       if (res.data) {
         setFavorite(res.data);
         console.log(res.data)
-        setFavoriteIcon({ name: "favorite"});
+        setFavoriteIcon({ name: "favorite" });
       }
     }
 
@@ -107,16 +107,14 @@ export default ({ navigation, route }) => {
             backgroundColor: "#ddd"
           }}
         >
-
-
           {product.photos && product.photos.length ?
             <ImageSlider images={
-              
+
               product.photos.map(photo => {
                 return `http://192.168.0.42:3333/images/${photo}`
               })
-            } style={{ height: 270, width: 270 }}/>
-            
+            } style={{ height: 270, width: 270 }} />
+
             /*<Image
               style={{ height: 270, width: 270 }}
               source={{ uri: `http://192.168.0.42:3333/images/${product.photos[0]}` }}
@@ -323,7 +321,10 @@ export default ({ navigation, route }) => {
         </View>
       </ScrollView>
 
-      <View
+      <TouchableOpacity
+
+        onPress={() => navigation.navigate('Chat')}
+
         style={{
           width: 300,
           position: "absolute",
@@ -350,7 +351,7 @@ export default ({ navigation, route }) => {
           fontSize: 17
         }}
         >Chat</Text>
-      </View>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }

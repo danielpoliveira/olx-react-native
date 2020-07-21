@@ -16,11 +16,13 @@ moment.updateLocale('pt-br', {
 });
 
 export default props => {
+
   const [products, setProducts] = useState([]);
-
+  
   const { navigation } = props;
-
+  
   const Anuncio = props => {
+    console.log(props )
     const { item, end, navigate, index } = props;
 
     const { ref } = useDropDown();
@@ -66,12 +68,11 @@ export default props => {
           <TouchableOpacity onPress={handleRemoveFavorite} >
             <MaterialIcons style={{ marginHorizontal: 5 }} name="delete" size={20} color="#666" />
           </TouchableOpacity>
-          {/*<Text style={{ fontSize: 12 }}>{moment(item.createdAt).format("D [de] MMMM")}</Text>*/}
+          
         </View>
       </View>
     );
   }
-
 
   useFocusEffect(
     React.useCallback(() => {

@@ -12,11 +12,10 @@ export const Subcategory = props => {
   const RenderItem = props => {
     const { item, end } = props;
 
-    console.log('item ', props)
     return (
-      <View  
+      <TouchableOpacity  
         
-      onTouchEnd={() => navigation.navigate('Inserir Anúncio', {
+      onPress={() => navigation.navigate('Inserir Anúncio', {
         selected: {
           category: props.category,
           subcategory: item,
@@ -25,7 +24,7 @@ export const Subcategory = props => {
 
         style={{ padding: 18, borderBottomWidth: !end? StyleSheet.hairlineWidth : 0}} >
         <Text>{item.name}</Text>
-      </View>
+      </TouchableOpacity>
     );
   }
 

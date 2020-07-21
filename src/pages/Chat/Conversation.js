@@ -1,93 +1,144 @@
-import React from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, KeyboardAvoidingView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, TextInput, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-const DATA = [
-  {id: '00', msg: 'Aceita troca?', is_me: true},
-  {id: '01', msg: 'testando', is_me: false},
-  {id: '02', msg: 'testando', is_me: true},
-  {id: '03', msg: 'testando', is_me: false},
-  {id: '04', msg: 'testando', is_me: false},
-  {id: '05', msg: 'testando', is_me: true},
-  {id: '06', msg: 'testando', is_me: true},
-  
-  {id: '07', msg: 'Chat', is_me: false},
-  {id: '08', msg: 'Bem', is_me: false},
-  {id: '09', msg: 'Legal', is_me: false},
-  {id: '10', msg: ':)', is_me: false},
-  {id: '11', msg: 'Simmm', is_me: true},
-];
+import io from 'socket.io-client';
 
-const RenderItem = props => {
-  const {item,end } = props;
+import { baseURL } from '../../services/api';
 
-  console.log(props);
+import { connect } from 'react-redux';
 
-  return (
-    <View style={[{ 
+class Conversation extends React.Component {
 
-    flexDirection: "row",
-    justifyContent:  item.is_me? 'flex-end': 'flex-start',
-    marginBottom: !end? 2: 50, 
-    }]}>
-      <View style={{
-        maxWidth: 200,
-        borderRadius: 7,
-        backgroundColor: item.is_me? "#6D0AD6": "#E5E5E5",
-        paddingVertical: 10, paddingHorizontal: 15,
-      }}>
-        <Text style={[item.is_me? {color: "#FFF"}: undefined]}>{item.msg}</Text>
-      </View>
-    </View>
-  );
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      text: '',
+      messages: []
+    };
+
+    this.socket = io(baseURL);
+
+    this.socket.on('previousMessage', (data) => {
+      console.log(data)
+
+      this.setState({ messages: data })
+    });
+
+    this.socket.on('receivedMessage', (data) => {
+
+      this.setState({ messages: [...this.state.messages, data] });
+    });
+
+  }
+
+  render() {
+
+    const handleSubmitMessage = () => {
+
+      if (this.state.text) {
+        this.socket.emit('sendMessage', {
+          author: this.props.user._id,
+          message: this.state.text,
+        });
+
+        this.setState({ messages: [...this.state.messages, { author: this.props.user._id, message: this.state.text }] })
+        this.setState({ text: '' })
+      }
+    }
+
+
+    const RenderItem = props => {
+      
+      const { item, end, is_me } = props;
+
+      return (
+        <View style={[{
+
+          flexDirection: "row",
+          justifyContent: is_me ? 'flex-end' : 'flex-start',
+          marginBottom: !end ? 2 : 50,
+        }]}>
+          <View style={{
+            maxWidth: 200,
+            borderRadius: 7,
+            //backgroundColor: item.is_me ? "#6D0AD6" : "#E5E5E5",
+            backgroundColor: is_me ? "#6D0AD6" : "#E5E5E5",
+            paddingVertical: 10, paddingHorizontal: 15,
+          }}>
+            <Text style={[is_me ? { color: "#FFF" } : undefined]}>{item.message}</Text>
+          </View>
+        </View>
+      );
+    }
+
+    return (
+      <>
+        <View style={{
+          backgroundColor: "#FFF",
+          borderBottomWidth: StyleSheet.hairlineWidth,
+          borderColor: "#888",
+          flexDirection: "row", alignItems: "center"
+        }} >
+          <View style={{ width: 50, height: 50, backgroundColor: "gray" }} />
+          <View style={{
+            paddingHorizontal: 10,
+
+          }} >
+            <Text>Fones de ouvido</Text>
+            <Text style={{ fontWeight: "700" }}>R$ 20</Text>
+          </View>
+        </View>
+
+        <FlatList
+          style={{ paddingHorizontal: 10, paddingTop: 10, paddingBottom: 10 }}
+          data={this.state.messages}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={item => <RenderItem {...item} is_me={item.item.author === this.props.user._id ? true : false} end={item.index === this.state.messages.length - 1} />}
+        />
+
+        <View><Text>Aqui</Text></View>
+
+        <KeyboardAvoidingView
+          style={{
+            width: "100%",
+            position: 'absolute', bottom: 0
+          }}
+          behavior="absolute"
+        >
+
+          <View style={{
+            borderColor: "#bbb",
+            borderTopWidth: StyleSheet.hairlineWidth,
+            flexDirection: "row", justifyContent: "space-between", alignItems: "center",
+            backgroundColor: "#FFF", paddingHorizontal: 10,
+          }} >
+            <TextInput
+              value={this.state.text}
+              onChangeText={value => this.setState({ text: value })}
+              style={{ flex: 1 }}
+              placeholder="Digite uma mensagem..."
+            />
+
+            <TouchableOpacity onPress={handleSubmitMessage}>
+              <MaterialIcons
+                name="send"
+                size={25}
+                color={this.state.text ? "#F18000" : "#D2D2D2"}
+              />
+            </TouchableOpacity>
+
+          </View>
+        </KeyboardAvoidingView>
+      </>
+    );
+  }
 }
 
-export default props => (
-  <>
-    <View style={{
-      backgroundColor: "#FFF",
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      borderColor: "#888",
-      flexDirection: "row", alignItems: "center"}} >
-      <View  style={{width: 50, height: 50, backgroundColor: "gray"}} />
-      <View style={{paddingHorizontal: 10, 
-      
-      }} >
-        <Text>Fones de ouvido</Text>
-        <Text style={{fontWeight: "700"}}>R$ 20</Text>
-      </View>
-    </View>
+const mapStateToProps = state => ({
+  user: state.app.user,
+})
 
-    <FlatList 
-      style={{paddingHorizontal: 10, paddingTop: 10, paddingBottom: 10}}
-      data={DATA} renderItem={item => <RenderItem {...item}
-         end={item.index === DATA.length-1} />} 
-    />
-
-    <View><Text>Aqui</Text></View>
-  
-  <KeyboardAvoidingView 
-    style={{
-    width: "100%", 
-    position: 'absolute',  bottom: 0}}
-    behavior="absolute"
-  >
-
-  <View style={{
-
-    borderColor: "#bbb",
-    borderTopWidth: StyleSheet.hairlineWidth,
-    flexDirection: "row", justifyContent: "space-between", alignItems: "center",
-    backgroundColor: "#FFF", paddingHorizontal: 10,}} >
-    <TextInput
-      style={{  flex:1 }}
-      placeholder="Digite uma mensagem..."
-    />
-
-    <MaterialIcons name="send" size={25} color="#D2D2D2" />
-
-  </View>
- </KeyboardAvoidingView>
- </>
-);
+export default connect(mapStateToProps, undefined)(Conversation);

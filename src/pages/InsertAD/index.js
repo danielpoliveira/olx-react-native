@@ -45,12 +45,14 @@ const InsertAD = props => {
   const subcategory =
     selected && selected.subcategory ? selected.subcategory : undefined;
 
+  const [destroy, setDestroy] = useState(false);
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [cep, setCep] = useState('');
   const [price, setPrice] = useState('');
 
-  const [checkBox, setCheckBox] = useState(true);
+  const [checkBox, setCheckBox] = useState(false);
   const [details, setDetails] = useState({});
 
   const [images, setImages] = useState([]);
@@ -73,7 +75,7 @@ const InsertAD = props => {
     };
 
     ImagePicker.launchCamera(options, response => {
-      if(response.uri) {
+      if (response.uri) {
         setImages([...images, response]);
       }
     })
@@ -85,22 +87,12 @@ const InsertAD = props => {
     };
 
     ImagePicker.launchImageLibrary(options, response => {
-      if (response.uri) 
+      if (response.uri)
         setImages([...images, response]);
     });
   }
 
   async function handleSubmit() {
-
-    console.log('------------------------------------------------------------------------------')
-    console.log('titulo ', title)
-    console.log('descricao ', description)
-    console.log('categoria', category)
-    console.log('cep ', cep)
-    console.log('price ', price)
-    console.log('checkbox ', checkBox ? 'true' : 'false');
-    console.log('detalhes ', details);
-    console.log('------------------------------------------------------------------------------')
 
     if (title && description && !_.isEmpty(category) && cep) {
       const data = new FormData();
@@ -110,8 +102,8 @@ const InsertAD = props => {
       data.append('_category', JSON.stringify(category))
       data.append('cep', cep)
       data.append('price', price)
-      data.append('hideNumber', checkBox? 'true': 'false')
-      data.append('details', JSON.stringify( details))
+      data.append('hideNumber', checkBox ? 'true' : 'false')
+      data.append('details', JSON.stringify(details))
 
       images.forEach((photo, index) => {
         data.append('images', {
@@ -121,8 +113,6 @@ const InsertAD = props => {
         });
       });
 
-      console.log(data._parts)
-
       const config = {
         headers: {
           'Content-Type': 'multipart/form-data; charset=utf-8;'
@@ -131,15 +121,23 @@ const InsertAD = props => {
 
       const res = await api.post('/anunciar', data, config)
         .then(value => {
+          
+          setDestroy(true);
+
+          route.params = undefined;
+
           ref.current.alertWithType("success", "Sucesso!", "Seu produto foi adicionado com exito :)");
           navigation.navigate('Anúncios')
         })
         .catch(err => {
           if (err) {
             if (err.response) {
+
+              ref.current.alertWithType("error", "Erro!", err.response.data);
+
               console.log(err.response.data)
             } else {
-
+              ref.current.alertWithType("error", "Erro!", err.message);
               console.log(err)
             }
           }
@@ -149,16 +147,12 @@ const InsertAD = props => {
 
   useFocusEffect(
     React.useCallback(() => {
-      // setTitle('');
-      // setDescription('');
-      // setCep('');
-      // setPrice('');
       setDetails({});
     }, [])
   )
 
   return (
-    <SafeAreaView>
+    <SafeAreaView key={destroy}>
       <ScrollView>
         <View style={{ backgroundColor: "#dfdfdf" }} >
           <View
@@ -178,9 +172,9 @@ const InsertAD = props => {
                   <Text style={{ color: "#6D0AD6", fontWeight: "700" }} >Usar a Camera</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity 
+                <TouchableOpacity
                   onPress={handleChoosePhoto}
-                  style={{ flexDirection: "column", alignItems: "center", marginHorizontal: 30 }} 
+                  style={{ flexDirection: "column", alignItems: "center", marginHorizontal: 30 }}
                 >
                   <MaterialIcons name="collections" size={45} color="#6D0AD6" />
                   <Text style={{ color: "#6D0AD6", fontWeight: "700" }} >Escolher da galeria</Text>
@@ -197,16 +191,16 @@ const InsertAD = props => {
 
         </View>
 
-        {images.length ? 
-        <View style={{ marginVertical: 10, justifyContent: "center", flexDirection: "row" }}>
-          {images.map((image, index) =>
+        {images.length ?
+          <View style={{ marginVertical: 10, justifyContent: "center", flexDirection: "row" }}>
+            {images.map((image, index) =>
 
-            <Image key={index}
-              source={{ uri: image.uri }}
-              style={{ width: 50, height: 50, marginHorizontal: 2.5, borderRadius: 5 }}
-            />
-          )}
-        </View> : undefined
+              <Image key={index}
+                source={{ uri: image.uri }}
+                style={{ width: 50, height: 50, marginHorizontal: 2.5, borderRadius: 5 }}
+              />
+            )}
+          </View> : undefined
         }
         <View style={{ marginHorizontal: 20, marginBottom: 20 }}>
           <View>
@@ -257,21 +251,21 @@ const InsertAD = props => {
               fontSize: 16
             }} >Categoria*</Text>
 
-            <TouchableOpacity onPress={() => { navigation.navigate('Categorias'); setDetails({}) }} 
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  borderWidth: StyleSheet.hairlineWidth,
-                  borderColor: "#0000008a",
-                  padding: 7.5,
-                  paddingLeft: 15,
-                  borderRadius: 8
-                }}
-              >
-                <Text style={{ color: "#aaa" }}>{auxCategoryName}</Text>
-                <MaterialIcons name="keyboard-arrow-right" size={30} color="#777" />
-            
+            <TouchableOpacity onPress={() => { navigation.navigate('Categorias'); setDetails({}) }}
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                borderWidth: StyleSheet.hairlineWidth,
+                borderColor: "#0000008a",
+                padding: 7.5,
+                paddingLeft: 15,
+                borderRadius: 8
+              }}
+            >
+              <Text style={{ color: "#aaa" }}>{auxCategoryName}</Text>
+              <MaterialIcons name="keyboard-arrow-right" size={30} color="#777" />
+
             </TouchableOpacity>
 
           </View>
