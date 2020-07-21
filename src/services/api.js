@@ -2,7 +2,8 @@ import axios from 'axios';
 
 import { isLogged } from './auth';
 
-export const baseURL = 'http://192.168.0.42:3333/';
+export const baseURL = 'https://my-olx-server.herokuapp.com';
+//export const baseURL = 'http://192.168.0.42:3333/';
 
 const api = axios.create({
   baseURL,

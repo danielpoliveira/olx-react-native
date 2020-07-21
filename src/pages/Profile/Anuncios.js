@@ -1,11 +1,11 @@
 import moment from 'moment';
 
 import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
 
 import { useDropDown } from '../../contexts';
 
-import api from '../../services/api';
+import api, { baseURL } from '../../services/api';
 import { useFocusEffect } from '@react-navigation/native';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -29,6 +29,8 @@ const Anuncios = props => {
     const { item, end, navigate, index } = props;
 
     const { ref } = useDropDown();
+
+    console.log(props.item.photos)
 
     const handleRemoveFavorite = async () => {
 
@@ -59,9 +61,9 @@ const Anuncios = props => {
             borderRadius: 5, overflow: "hidden"
           }]} >
 
-        {item.productId && item.productId.photos && item.productId.photos.length
+        {item && item.photos && item.photos.length
           ?
-          <Image style={{ width: 125, height: 125 }} source={{ uri: `http://192.168.0.42:3333/images/${item.productId.photos[0]}/` }} />
+          <Image style={{ width: 125, height: 125 }} source={{ uri: `${baseURL}/images/${item.photos[0]}/` }} />
           :
           <View style={{ width: 125, backgroundColor: '#' + (Math.random() * 0xFFFFFF << 0).toString(16) }} />
         }

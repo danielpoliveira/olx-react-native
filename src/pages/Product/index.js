@@ -13,6 +13,8 @@ import { useDropDown } from '../../contexts';
 
 import ImageSlider from 'react-native-image-slider';
 
+import { baseURL } from '../../services/api';
+
 YellowBox.ignoreWarnings(['Warning: componentwillmount has been renamed and is not recommended for use.']);
 
 moment.updateLocale('pt-br', {
@@ -111,7 +113,8 @@ export default ({ navigation, route }) => {
             <ImageSlider images={
 
               product.photos.map(photo => {
-                return `http://192.168.0.42:3333/images/${photo}`
+                //return `http://192.168.0.42:3333/images/${photo}`
+                return `${baseURL}/images/${photo}`
               })
             } style={{ height: 270, width: 270 }} />
 

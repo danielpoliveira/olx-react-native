@@ -5,6 +5,8 @@ import { View, Text, Image, Dimensions, Alert, TouchableOpacity } from 'react-na
 import { FlatList } from 'react-native-gesture-handler';
 import { useFocusEffect } from '@react-navigation/native';
 
+import { baseURL } from '../../services/api';
+
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 moment.updateLocale('pt-br', {
@@ -34,7 +36,7 @@ const Anuncio = props => {
 
       {item.photos && item.photos.length
         ?
-        <Image style={{ width: 125, height: 125 }} source={{ uri: `http://192.168.0.42:3333/images/${item.photos[0]}/` }} />
+        <Image style={{ width: 125, height: 125 }} source={{ uri: `${baseURL}/images/${item.photos[0]}/` }} />
         :
         <View style={{ width: 125, backgroundColor: '#' + (Math.random() * 0xFFFFFF << 0).toString(16) }} />
       }

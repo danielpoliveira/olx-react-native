@@ -8,7 +8,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import { useDropDown } from '../../contexts';
 
-import api from '../../services/api';
+import api, { baseURL } from '../../services/api';
 
 moment.updateLocale('pt-br', {
   months: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
@@ -132,7 +132,7 @@ const Anuncio = props => {
 
       {item.productId && item.productId.photos && item.productId.photos.length
         ?
-        <Image style={{ width: 125, height: 125 }} source={{ uri: `http://192.168.0.42:3333/images/${item.productId.photos[0]}/` }} />
+        <Image style={{ width: 125, height: 125 }} source={{ uri: `${baseURL}/images/${item.productId.photos[0]}/` }} />
         :
         <View style={{ width: 125, backgroundColor: '#' + (Math.random() * 0xFFFFFF << 0).toString(16) }} />
       }
