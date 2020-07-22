@@ -1,6 +1,6 @@
 # Olx React native App
 
-Um clone app baseado no aplicativo original da OLX construído em ract native.
+Um clone app baseado no aplicativo original da OLX construído em React Native.
 
 ## Getting Started
 
