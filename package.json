@@ -20,7 +20,7 @@
     "axios": "^0.19.2",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.19",
-    "moment": "^2.27.0",
+    "moment": "^2.29.4",
     "react": "16.11.0",
     "react-native": "0.62.2",
     "react-native-dropdownalert": "^4.3.0",
